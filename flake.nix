@@ -100,7 +100,7 @@
       };
       jupyter = {
         path = ./devFlakes/jupyter;
-        description = "Jupyter dev environment with devenv, and direnv"
+        description = "Jupyter dev environment with devenv, and direnv";
       };
     };
 
