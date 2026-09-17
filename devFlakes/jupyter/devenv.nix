@@ -48,6 +48,11 @@
 
   # Custom shell startup message
   enterShell = ''
+    # Create .envrc if it doesn't exist
+    if [ ! -f .envrc ]; then
+      echo "use flake" > .envrc
+      echo "Created default .envrc file."
+    fi
     echo " Reusable Jupyter Data Science Shell Ready!"
     echo " - Run 'lab' to launch JupyterLab"
     echo " - Run 'nb-clean' to clear outputs before committing"
