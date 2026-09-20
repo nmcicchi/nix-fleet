@@ -8,13 +8,13 @@
   boot.kernelModules = [ "kvm-intel" ];
   boot.extraModulePackages = [ ];
 
-  # Supermicro ASPEED BMC framebuffer fixes to prevent display crashes
+  # Supermicro ASPEED BMC framebuffer fix to prevent EFI boot crashes
   boot.kernelParams = [
     "console=tty0"
-    "panic=10"
-    "nomodeset"
-    "video=efifb:off"
-    "initcall_blacklist=sysfb_init"
+    # "panic=10"
+    # "nomodeset"
+    # "video=efifb:off"
+    # "initcall_blacklist=sysfb_init"
   ];
 
   # Root mapped to RAM (tmpfs)
@@ -24,14 +24,15 @@
     options = [ "defaults" "size=16G" "mode=755" ];
   };
 
-  # Ext4 root drive mapped to /persist using label
+  # Ext4 root drive mapped to /persist
   fileSystems."/persist" = {
-    device = "/dev/disk/by-label/persist";
+    device = "/dev/disk/by-uuid/d0555a94-cf8f-4d6d-8cff-45ec4ee57abf";
     fsType = "ext4";
     neededForBoot = true; # CRITICAL: ensures /persist mounts in stage 1
   };
 
   # Persistent Nix Store bind-mounted from /persist
+  # (CRITICAL: Prevents 16GB RAM overflow from nix store allocations)
   fileSystems."/nix" = {
     device = "/persist/nix";
     fsType = "none";
@@ -39,9 +40,9 @@
     neededForBoot = true;
   };
 
-  # EFI Boot Partition using label
+  # EFI Boot Partition
   fileSystems."/boot" = {
-    device = "/dev/disk/by-label/boot";
+    device = "/dev/disk/by-uuid/B41B-EF9A";
     fsType = "vfat";
     options = [ "fmask=0022" "dmask=0022" ];
   };

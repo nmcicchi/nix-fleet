@@ -51,8 +51,6 @@ in
         zen-internet
         search-by-image
         addy_io
-        return-youtube-dislikes
-        # betterttv # requires unfree software
         twitch-auto-points
       ];
 
