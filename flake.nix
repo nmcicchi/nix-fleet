@@ -98,6 +98,10 @@
         path = ./devFlakes/java;
         description = "CS Java Dev Environment with devenv, direnv, and Checkstyle";
       };
+      jupyter = {
+        path = ./devFlakes/jupyter;
+        description = "Jupyter dev environment with devenv, and direnv";
+      };
     };
 
     nixosConfigurations = {

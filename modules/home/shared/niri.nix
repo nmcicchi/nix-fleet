@@ -294,7 +294,7 @@
     "niri/full-config.kdl".text = ''
       include "${config.home.homeDirectory}/.config/niri/config.kdl"
       include "${config.home.homeDirectory}/.config/niri/noctalia.kdl"
-      include "${config.home.homeDirectory}/.config/niri/monitors.kdl"
+      include optional = true "${config.home.homeDirectory}/.config/niri/monitors.kdl"
     '';
   };
 

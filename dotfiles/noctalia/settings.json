@@ -181,6 +181,10 @@
                     ]
                 },
                 {
+                    "iconColor": "none",
+                    "id": "DarkMode"
+                },
+                {
                     "defaultSettings": {
                         "githubGistId": "",
                         "githubToken": "",
@@ -694,6 +698,10 @@
             {
                 "enabled": true,
                 "id": "zenBrowser"
+            },
+            {
+                "enabled": true,
+                "id": "steam"
             }
         ],
         "enableUserTheming": false
@@ -753,7 +761,7 @@
         "wallhavenCategories": "111",
         "wallhavenOrder": "desc",
         "wallhavenPurity": "100",
-        "wallhavenQuery": "totoro",
+        "wallhavenQuery": "solid black",
         "wallhavenRatios": "",
         "wallhavenResolutionHeight": "",
         "wallhavenResolutionMode": "atleast",

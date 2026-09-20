@@ -6,7 +6,7 @@
     enable = true;
     settings = {
       user = {
-        name = "MrChu6606";
+        name = "nmcicchi";
         email = "nmcicchi@gmail.com";
       };
       init.defaultBranch = "main";
