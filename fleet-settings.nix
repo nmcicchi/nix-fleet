@@ -94,7 +94,7 @@
     subnetPrefix = 22;
     gateway = "192.168.4.1";
     dns = [ "192.168.4.1" "1.1.1.1" ];
-    ssid = "rialsplace";
+    ssid = "MikroTik-75856A";
     tz = "America/New_York";
   };
 }
