@@ -23,12 +23,20 @@ vim.api.nvim_create_autocmd("FileType", {
   end,
 })
 
--- Markdown → soft line wrap
+-- Markdown → soft line wrap + visual line navigation
 vim.api.nvim_create_autocmd("FileType", {
   pattern = {"markdown", "text"},
   callback = function()
-    vim.opt_local.wrap = true;
-    vim.opt_local.linebreak = true;
-    vim.opt_local.breakindent = true;
+    vim.opt_local.wrap = true
+    vim.opt_local.linebreak = true
+    vim.opt_local.breakindent = true
+    vim.opt_local.relativenumber = true
+    vim.opt_local.number = true
+
+    vim.opt_local.showbreak = "› "
+
+    -- Remap j/k and count operations to move visually by wrapped lines
+    vim.keymap.set("n", "j", "gj", { silent = true, buffer = true })
+    vim.keymap.set("n", "k", "gk", { silent = true, buffer = true })
   end,
 })

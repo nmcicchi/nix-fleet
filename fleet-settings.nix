@@ -3,7 +3,7 @@
 {
   sequoia = {
     lan = "192.168.5.100";
-    tail = "100.124.193.10";
+    tail = "100.102.190.83";
     shim = "192.168.6.200";
 
     containers = {
@@ -29,6 +29,7 @@
       homeassistant = 8123; # forced cause docker
       mosquitto = 1883;
       zigbee = 8125;
+      syncthing = 22000; #hardcoded atm
 
       # Infrastructure
       prometheus = {

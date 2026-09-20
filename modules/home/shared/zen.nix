@@ -106,6 +106,15 @@ in
         ];
       };
 
+      containersForce = true; # Delete containers not declared
+      containers = {
+        School = {
+          color = "blue";
+          icon = "fingerprint";
+          id = 1;
+        };
+      };
+
       spacesForce = true; # Delete spaces not declared here
       # Native Zen Spaces with custom icons
       spaces = {
@@ -121,6 +130,7 @@ in
           id = "d6b55af5-965d-4cd8-91c3-b9dda7ffa54e";
           position = 2000;
           icon = "https://raw.githubusercontent.com/lucide-icons/lucide/main/icons/graduation-cap.svg";
+          container = 1;
         };
 
         "Server" = {
