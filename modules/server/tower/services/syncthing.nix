@@ -10,7 +10,7 @@ services.mySyncthing = {
 
     folders = {
       "School" = {
-        path = "/home/Nic/school";
+        path = "/home/nic/school";
         devices = [ "laptop" "desktop" ];
         watch = true;
         versioning = {

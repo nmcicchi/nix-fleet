@@ -1,10 +1,10 @@
-{ config, lib, hostname, fleetSetting ? null, ... }:
+{ config, lib, hostname, fleetSettings ? null, ... }:
 
 with lib;
 
 let
   cfg = config.services.mySyncthing;
-  username = "Nic";
+  username = "nic";
 in
 {
   options.services.mySyncthing = {
@@ -66,14 +66,18 @@ in
       overrideDevices = true;
 
       settings = {
+        inherit (cfg) devices;
         gui.enabled = false;
-        devices = cfg.devices;
-        folders = cfg.folders;
+
+        folders = mapAttrs (_name: folderCfg: {
+          inherit (folderCfg) path devices versioning;
+          fsWatcherEnabled = folderCfg.watch;
+        }) cfg.folders;
       };
     };
 
-    networking.firewall.allowedTCPPorts = if cfg.role == "hub" && fleetSetting != null
-      then [ fleetSetting.sequoia.ports.syncthing ]
+    networking.firewall.allowedTCPPorts = if cfg.role == "hub" && fleetSettings != null
+      then [ fleetSettings.sequoia.ports.syncthing ]
       else [ 22000 ];
     networking.firewall.allowedUDPPorts = [ 22000 21027 ];
   };

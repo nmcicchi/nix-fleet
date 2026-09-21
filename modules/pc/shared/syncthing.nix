@@ -9,7 +9,7 @@ _: {
 
     folders = {
       "School" = {
-        path = "/home/Nic/school";
+        path = "/home/nic/school";
         devices = [ "server" ];
         watch = true;
       };
