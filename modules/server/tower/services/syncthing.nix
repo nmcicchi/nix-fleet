@@ -1,38 +1,26 @@
-{ fleetSetting, ... }: let
-  username = "Nic";
-in
-{
-  services.syncthing = {
+_: {
+services.mySyncthing = {
     enable = true;
-    user = username;
-    dataDir = "/home/${username}";
-    configDir = "/home/${username}/.config/syncthing";
+    role = "hub";
 
-    overrideFolders = true;
-    overrideDevices = true;
+    devices = {
+      "laptop"  = { id = "JAZNVH6-Z6NKEJ5-PUBLTNA-QRJSJNP-L422CY2-D2BHXSW-KO43777-3KHLTAJ"; };
+      "desktop" = { id = "BT7EKN4-4QDHKBG-QDKKO3Q-GROPYYG-DDWXXHO-EOUWHTJ-QO4IER6-PTZOJQP"; };
+    };
 
-    settings = {
-      devices = {
-        "laptop" = { id = "SERVER-DEVICE-ID-HERE"; };
-        "desktop" = { id = "SERVER-DEVICE-ID-HERE"; };
-      };
-
-      folders = {
-        "School" = {
-          path = "/home/${username}/school";
-          devices = [ "laptop" "desktop" ];
-          versioning = {
-            type = "staggered";
-            params = {
-              cleanInterval = "3600";
-              maxAge = "1555200"; # 180 days
-            };
+    folders = {
+      "School" = {
+        path = "/home/Nic/school";
+        devices = [ "laptop" "desktop" ];
+        watch = true;
+        versioning = {
+          type = "staggered";
+          params = {
+            cleanInterval = "3600";
+            maxAge = "15552000"; # 180 days
           };
         };
       };
     };
   };
-
-  networking.firewall.allowedTCPPorts = [ fleetSetting.sequoia.ports.syncthing ];
-  networking.firewall.allowedUDPPorts = [ 22000 21027 ];
 }

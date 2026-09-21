@@ -126,7 +126,6 @@
         modules = [
           ./modules/pc/laptop
           ./modules/pc/shared
-          ./modules/shared
           inputs.nix-flatpak.nixosModules.nix-flatpak
           inputs.silentSDDM.nixosModules.default
           inputs.sops-nix.nixosModules.default
@@ -145,7 +144,6 @@
           (import ./overlays/unstable.nix { inherit nixpkgs-unstable; } )
         ];
         modules = [
-          ./modules/shared
           ./modules/pc/shared
           ./modules/pc/desktop
           inputs.nix-flatpak.nixosModules.nix-flatpak
@@ -164,7 +162,6 @@
         system = "x86_64-linux";
         pkgsInput = nixpkgs;
         modules = [
-          ./modules/shared
           ./modules/server/tower
           inputs.sops-nix.nixosModules.default
           inputs.disko.nixosModules.default
@@ -181,7 +178,6 @@
         system = "aarch64-linux";
         pkgsInput = nixpkgs;
         modules = [
-          ./modules/shared
           ./modules/server/assistant
           inputs.sops-nix.nixosModules.default
 
@@ -199,7 +195,6 @@
         system = "aarch64-linux";
         pkgsInput = nixpkgs-unstable;
         modules = [
-          ./modules/shared
           ./modules/server/dashboard
           inputs.sops-nix.nixosModules.default
           inputs.nixos-hardware.nixosModules.raspberry-pi-5
@@ -212,7 +207,6 @@
         pkgsInput = nixpkgs;
         cudaSupport = true;
         modules = [
-            ./modules/shared
             ./modules/server/ai
             inputs.sops-nix.nixosModules.default
         ];

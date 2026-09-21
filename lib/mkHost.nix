@@ -11,7 +11,7 @@
   fleetSettings = import ../fleet-settings.nix;
 in
 pkgsInput.lib.nixosSystem {
-  inherit system modules;
+  inherit system;
 
   pkgs = import pkgsInput {
     inherit system overlays;
@@ -23,11 +23,16 @@ pkgsInput.lib.nixosSystem {
     };
   };
 
+  modules = [
+    ../modules/shared
+    ../modules/custom
+  ] ++ modules;
+
   specialArgs = {
     inherit hostname;
 
     fleetSettings =
-      if routing == true
+      if routing
       then fleetSettings
       else fleetSettings.${hostname} or {};
 
