@@ -53,9 +53,43 @@ in
   };
 
   config = mkIf cfg.enable {
-    sops.secrets = {
-      "syncthing/${hostname}/cert" = { owner = username; group = "users"; };
-      "syncthing/${hostname}/key"  = { owner = username; group = "users"; };
+  sops = {
+    secrets = {
+      "syncthing/${hostname}/cert" = {
+          owner = username;
+          group = "users";
+        };
+      "syncthing/${hostname}/key"  = {
+          owner = username;
+          group = "users";
+        };
+    };
+    # This has to be dumb
+    templates = {
+      "syncthing-${hostname}-cert" = {
+        content = config.sops.placeholder."syncthing/${hostname}/cert";
+        owner = "nic";
+        group = "users";
+        mode = "0600";
+      };
+      "syncthing-${hostname}-key" = {
+        content = config.sops.placeholder."syncthing/${hostname}/key";
+        owner = "nic";
+        group = "users";
+        mode = "0600";
+      };
+    };
+  };
+     systemd.services.syncthing = {
+      after = [ "sops-nix.service" ];
+      wants = [ "sops-nix.service" ];
+      #stopIfChanged = false;
+    };
+
+    systemd.services.syncthing-init = {
+      after = [ "sops-nix.service" ];
+      wants = [ "sops-nix.service" ];
+      #stopIfChanged = false;
     };
 
     services.syncthing = {
@@ -64,15 +98,18 @@ in
       dataDir = "/home/${username}";
       configDir = "/home/${username}/.config/syncthing";
 
-      cert = config.sops.secrets."syncthing/${hostname}/cert".path;
-      key  = config.sops.secrets."syncthing/${hostname}/key".path;
+      cert = config.sops.templates."syncthing-${hostname}-cert".path;
+      key  = config.sops.templates."syncthing-${hostname}-key".path;
 
       overrideFolders = true;
       overrideDevices = true;
 
       settings = {
         inherit (cfg) devices;
-        gui.enabled = false;
+        gui = {
+          enabled = true;
+          address = "127.0.0.1:8384";
+        };
 
         folders = mapAttrs (_name: folderCfg: {
           inherit (folderCfg) path devices versioning ignorePatterns;
