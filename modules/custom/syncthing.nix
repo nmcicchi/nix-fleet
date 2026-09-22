@@ -40,6 +40,11 @@ in
           devices = mkOption { type = types.listOf types.str; description = "Devices to sync this folder with"; };
           watch = mkOption { type = types.bool; default = true; description = "Enable filesystem watching"; };
           versioning = mkOption { type = types.nullOr types.attrs; default = null; description = "Versioning strategy"; };
+          ignorePatterns = mkOption {
+            type = types.listOf types.str;
+            default = [];
+            description = "List of .stignore patterns";
+          };
         };
       });
       default = {};
@@ -70,7 +75,7 @@ in
         gui.enabled = false;
 
         folders = mapAttrs (_name: folderCfg: {
-          inherit (folderCfg) path devices versioning;
+          inherit (folderCfg) path devices versioning ignorePatterns;
           fsWatcherEnabled = folderCfg.watch;
         }) cfg.folders;
       };

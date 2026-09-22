@@ -12,6 +12,12 @@ _: {
         path = "/home/nic/school";
         devices = [ "server" ];
         watch = true;
+
+        ignorePatterns = [
+          ".git"
+          ".git/**"
+          "F26Team3"
+        ];
       };
     };
   };
