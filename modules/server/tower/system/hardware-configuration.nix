@@ -26,7 +26,7 @@
 
   # Ext4 root drive mapped to /persist
   fileSystems."/persist" = {
-    device = "/dev/disk/by-uuid/d0555a94-cf8f-4d6d-8cff-45ec4ee57abf";
+    device = "/dev/disk/by-uuid/403452b3-d6af-4c9e-bbc3-78b64c8914e5";
     fsType = "ext4";
     neededForBoot = true; # CRITICAL: ensures /persist mounts in stage 1
   };
@@ -42,7 +42,7 @@
 
   # EFI Boot Partition
   fileSystems."/boot" = {
-    device = "/dev/disk/by-uuid/B41B-EF9A";
+    device = "/dev/disk/by-uuid/9BC2-98D8";
     fsType = "vfat";
     options = [ "fmask=0022" "dmask=0022" ];
   };
