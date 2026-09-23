@@ -91,9 +91,7 @@
     templates = {
       # initialize a devenv with
       # nix flake init -t ~/nix-fleet#java
-      # devenv direnvrc
       # direnv allow
-      # devenv shell
       java = {
         path = ./devFlakes/java;
         description = "CS Java Dev Environment with devenv, direnv, and Checkstyle";

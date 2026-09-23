@@ -1,7 +1,6 @@
 { pkgs, ... }: {
   programs = {
     zsh.interactiveShellInit = ''
-      eval "$(direnv hook zsh)"
     '';
     nh = {
       enable = true;
@@ -14,6 +13,8 @@
       enable = true;
       nix-direnv.enable = true;
       enableZshIntegration = true;
+      # make direnv quiet
+      settings.global.hide_env_diff = true;
     };
   };
 
