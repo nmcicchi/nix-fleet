@@ -29,6 +29,7 @@
       homeassistant = 8123; # forced cause docker
       mosquitto = 1883;
       zigbee = 8125;
+      matter = 5580;
       syncthing = 22000; #hardcoded atm
 
       # Infrastructure

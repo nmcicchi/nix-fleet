@@ -1,25 +1,31 @@
 { fleetSettings, ... }: {
-  # Enable the native Matter Python server
-  services.matter-server = {
-    enable = true;
-    # Listen on port 5580 on all interfaces (or 127.0.0.1 if HA is on the same machine)
-    listenAddress = "0.0.0.0";
-    port = fleetSettings.sequoia.ports.matter;
-  };
-  networking = {
-    # Enable IPv6 (Matter requires IPv6 link-local addressing for local mDNS discovery)
-    enableIPv6 = true;
-    firewall = {
-      # Open the Matter Server WebSocket port if HA is on a different host/VLAN its not
-      # allowedTCPPorts = [ fleetSettings.sequoia.ports.matter ];
-      # Allow mDNS traffic for device discovery across subnets
-      allowedUDPPorts = [ 5353 ];
+  virtualisation.oci-containers.backend = "podman";
+
+  virtualisation.oci-containers.containers.matter-server = {
+    image = "ghcr.io/home-assistant-libs/python-matter-server:stable";
+    autoStart = true;
+    
+    # Host networking gives the container direct access to IPv6 & mDNS traffic
+    extraOptions = [
+      "--network=host"
+    ];
+
+    volumes = [
+      # Store state directly on /persist to bypass tmpfs root impermanence
+      "/persist/var/lib/matter-server:/data"
+    ];
+
+    environment = {
+      PORT = toString fleetSettings.sequoia.ports.matter;
     };
   };
 
-  environment.persistence."/nix/persist" = {
-    directories = [
-      "/var/lib/matter-server"
-    ];
+  # Host network configuration
+  networking = {
+    enableIPv6 = true;
+    firewall = {
+      allowedTCPPorts = [ fleetSettings.sequoia.ports.matter ];
+      allowedUDPPorts = [ 5353 ]; # mDNS
+    };
   };
 }
