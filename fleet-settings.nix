@@ -3,7 +3,7 @@
 {
   sequoia = {
     lan = "192.168.5.100";
-    tail = "100.102.190.83";
+    tail = "100.104.58.30"; # this is critical for adguard to work
     shim = "192.168.6.200";
 
     containers = {
