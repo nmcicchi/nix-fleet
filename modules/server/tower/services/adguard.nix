@@ -9,6 +9,12 @@
     settings = {
       schema_version = 20;
 
+      # Split-horizon DNS rules
+      user_rules = [
+        "||home^$client=192.168.0.0/16,dnsrewrite=${fleetSettings.sequoia.lan}"
+        "||home^$client=100.64.0.0/10,dnsrewrite=${fleetSettings.sequoia.tail}"
+      ];
+
       dns = {
         port = fleetSettings.sequoia.ports.adguard.dns;
         bind_hosts = [ 
@@ -16,7 +22,7 @@
           fleetSettings.sequoia.tail
         ];
 
-        private_networks = [ "100.64.0.0/10" "192.168.0.0/16" ];
+        private_networks = [ "100.64.0.0/10" "192.168.4.0/22" ];
         
         bootstrap_dns = [
           "1.1.1.1"
@@ -26,20 +32,6 @@
         upstream_dns = [
           "https://dns.cloudflare.com/dns-query"
           "https://dns.quad9.net/dns-query"
-        ];
-
-        rewrites = [
-          {
-            domain = "*.home";
-            answer = fleetSettings.sequoia.tail;
-            enabled = true;
-          }
-          # this one should not be necessary
-          {
-            domain = "adguard.home";
-            answer = fleetSettings.sequoia.tail;
-            enabled = true;
-          }
         ];
       };
       filtering = {
