@@ -190,7 +190,7 @@
       rowan = inputs.nixos-raspberrypi.lib.nixosSystem {
         specialArgs = {
           hostname = "rowan";
-          fleetSettings = (import ./lib/fleet-settings.nix).rowan or {};
+          fleetSettings = (import ./fleet-settings.nix).rowan or {};
           networkSettings = (import ./fleet-settings.nix).network;
           loadModules = import ./lib/load-modules.nix { inherit (nixpkgs) lib; };
         };
