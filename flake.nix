@@ -19,9 +19,7 @@
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
 
-    nixos-hardware = {
-      url = "github:NixOS/nixos-hardware/master";
-    };
+    nixos-raspberrypi.url = "github:nvmd/nixos-raspberrypi/main";
 
     impermanence.url = "github:nix-community/impermanence";
 
@@ -188,16 +186,24 @@
         ];
       };
 
-      rowan = mkHost {
-        hostname = "rowan";
-        system = "aarch64-linux";
-        pkgsInput = nixpkgs-unstable;
+      # special case for rowan on raspi 5 pain in my ass
+      rowan = inputs.nixos-raspberrypi.lib.nixosSystem {
+        specialArgs = {
+          hostname = "rowan";
+          fleetSettings = (import ./lib/fleet-settings.nix).rowan or {};
+          networkSettings = (import ./lib/fleet-settings.nix).network;
+          loadModules = import ./lib/load-modules.nix { inherit (nixpkgs) lib; };
+        };
         modules = [
+          ./modules/shared
+          ./modules/custom
           ./modules/server/dashboard
           ./modules/server/pis
           inputs.sops-nix.nixosModules.default
-          inputs.nixos-hardware.nixosModules.raspberry-pi-5
-        ];
+        ] ++ (with inputs.nixos-raspberrypi.nixosModules; [
+          raspberry-pi-5.base
+          trusted-nix-caches
+        ]);
       };
 
       aspen = mkHost {
