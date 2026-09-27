@@ -191,7 +191,7 @@
         specialArgs = {
           hostname = "rowan";
           fleetSettings = (import ./lib/fleet-settings.nix).rowan or {};
-          networkSettings = (import ./lib/fleet-settings.nix).network;
+          networkSettings = (import ./fleet-settings.nix).network;
           loadModules = import ./lib/load-modules.nix { inherit (nixpkgs) lib; };
         };
         modules = [
