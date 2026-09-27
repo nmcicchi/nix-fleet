@@ -194,6 +194,7 @@
         pkgsInput = nixpkgs-unstable;
         modules = [
           ./modules/server/dashboard
+          ./modules/server/pis
           inputs.sops-nix.nixosModules.default
           inputs.nixos-hardware.nixosModules.raspberry-pi-5
         ];

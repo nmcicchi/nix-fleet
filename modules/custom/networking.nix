@@ -7,7 +7,7 @@ let
   subnetPrefix = if networkSettings != null then toString networkSettings.subnetPrefix else "";
   hasWifi = (fleetSettings != null) && (fleetSettings ? wifi) && (fleetSettings.wifi != null);
 
-  wifiSsid = networkSettings.ssid or "MikroTik-75856A";
+  wifiSsid = networkSettings.ssid;
 
 in
 {

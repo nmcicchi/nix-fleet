@@ -23,4 +23,14 @@ services.mySyncthing = {
       };
     };
   };
+  environment.persistence."/persist" = {
+    directories = [
+      "/var/lib/syncthing" # persists device ID tls certs and index db
+    ];
+    users.nic = {
+      directories = [
+        "school"
+      ];
+    };
+  };
 }

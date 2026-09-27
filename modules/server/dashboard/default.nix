@@ -1,4 +1,4 @@
 { loadModules, ... }:
 {
-  imports = loadModules ./. ++ [../pis/default.nix];
+  imports = loadModules ./.;
 }
