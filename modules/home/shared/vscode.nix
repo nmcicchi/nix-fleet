@@ -15,7 +15,8 @@
         "vim.enable" = true;
         "vim.useSystemClipboard" = true;
         "vim.leader" = "<space>";
-        "workbench.colorTheme" = "Default Dark Modern";
+        # This requires the extension
+        "workbench.colorTheme" = "Mac Dark Pro";
         "direnv.status.show" = "warning";
         "keyboard.dispatch" = "keyCode";
       };
