@@ -4,7 +4,7 @@ keys:
   - &yubikey age10apn3gq685qj6nhtk8jxv4hx7tt5ffqvj099nt86keu7glryne0ss6df3c
   - &server_tower age14r54pv5yptseavpj2ggg67psd5qn6cwvywjwua7gare9w2u259zs7580eg
   - &server_assistant age127kdzfp3jyenv32fk0hc7ruyrpc5luw7c3v306f6xs39xj87ppdqrfla4h
-  - &server_dashboard age1xh3zmwd879d7frp3we3nspga6kgr7ukmdcfyq5m3kj4wdexdtgxqvrene9
+  - &server_dashboard age1sxydcql2ht5nqrp0pclj9vxnkr9lfz3s92txlu37u3f7pat9tqts3hzehl
   - &server_ai age1ftyyn6qcvv0v0nz8098sshc33v20gssvjreka6gfs4kl8864kq2scr2a54
 creation_rules:
   # Global secrets

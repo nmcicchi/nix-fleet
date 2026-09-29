@@ -1,6 +1,7 @@
 { pkgs, fleetSettings, ... }: 
 
 let
+  # how does prism launcher fetch specific versions of mods?
   mods26-1 = [
     (pkgs.fetchurl {
       name = "ferritecore-9.0.0-fabric.jar";
@@ -30,10 +31,11 @@ in
       mods = mods26-1;
       
       environment = {
-        version = "26.1.2";
+        version = "26.3";
         memory = "12G";
         viewDistance = 16;
         simulationDistance = 8;
+        difficulty = "normal";
       };
     };
 
@@ -46,7 +48,7 @@ in
       mods = [ ];
       
       environment = {
-        version = "1.20.4";
+        version = "26.1.2"; # whatever the latest version is
         memory = "4G";
       };
     };

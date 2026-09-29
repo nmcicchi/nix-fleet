@@ -203,6 +203,7 @@
         ] ++ (with inputs.nixos-raspberrypi.nixosModules; [
           raspberry-pi-5.base
           trusted-nix-caches
+          sd-image
         ]);
       };
 
