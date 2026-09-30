@@ -1,7 +1,11 @@
-{ pkgs, fleetSettings, ... }: 
+{ pkgs, fleetSettings, lib, ... }: 
 
 let
+<<<<<<< HEAD
   # how does prism launcher fetch specific versions of mods?
+=======
+  # for tmp hash use lib.fakeHash
+>>>>>>> e08b3bc (commit)
   mods26-1 = [
     (pkgs.fetchurl {
       name = "ferritecore-9.0.0-fabric.jar";
@@ -17,6 +21,11 @@ let
       name = "servercore-fabric-1.5.17+26.1.2.jar";
       url = "https://cdn.modrinth.com/data/4WWQxlQP/versions/2siue87F/servercore-fabric-1.5.17%2B26.1.2.jar";
       sha256 = "sha256-TIMlZiFdj/3NsWv3utkIoduZZo2YpDaWQ2apxNhL3cA=";
+    })
+    (pkgs.fetchurl {
+      name = "krypton-0.3.2.jar";
+      url = "https://cdn.modrinth.com/data/fQEb0iXm/versions/UugdIYJw/krypton-0.3.2.jar";
+      sha256 = "sha256-C0pki5wvBIJH+ElxKv9YsrrFsntgwAcrtr9JOti3n+8=";
     })
   ];
 
