@@ -29,10 +29,26 @@ let
         type = types.str;
         default = "/var/lib/tailscale-${name}";
       };
+
+      # Option A: Declarative individual mods fetched via Nix
       mods = mkOption {
         type = types.listOf types.package;
         default = [ ];
+        description = "List of pkgs.fetchurl mod packages to mount read-only into /data/mods.";
       };
+
+      # Option B: Dynamic Modpack URL or Modrinth Slug/Link
+      modpackUrl = mkOption {
+        type = types.nullOr types.str;
+        default = null;
+        description = "Direct URL to a .zip or .mrpack modpack file.";
+      };
+      modrinthModpack = mkOption {
+        type = types.nullOr types.str;
+        default = null;
+        description = "Modrinth modpack slug, version ID, or URL.";
+      };
+
       mcIp = mkOption {
         type = types.str;
       };
@@ -67,43 +83,67 @@ let
           type = types.str;
           default = "TRUE";
         };
+        difficulty = mkOption {
+          type = types.enum [ "peaceful" "easy" "normal" "hard" ];
+          default = "normal";
+        };
+        autopause = mkOption {
+          type = types.int;
+          default = 300;
+        };
+        mode = mkOption {
+          type = types.enum [ "survival" "creative" "adventure" "spectator" ];
+          default = "survival";
+        };
       };
     };
   };
 
   mkContainers = name: instance:
     let
-      modpack = pkgs.runCommand "${name}-mods" { } ''
+      hasNixMods = instance.mods != [ ];
+
+      modpackStore = pkgs.runCommand "${name}-mods" { } ''
         mkdir -p $out
         ${concatMapStringsSep "\n" (mod: "ln -s ${mod} $out/${mod.name}") instance.mods}
       '';
+
+      # Only mount the read-only Nix store path if declarative mods exist.
+      # Otherwise, leave /data/mods inside appdata writable for dynamic downloads.
+      volumes = [ "/appdata/${name}/data:/data" ]
+        ++ optional hasNixMods "${modpackStore}:/data/mods";
+
+      # Dynamic modpack environment variables
+      modpackEnv = 
+        optionalAttrs (instance.modpackUrl != null) { MODPACK = instance.modpackUrl; }
+        // optionalAttrs (instance.modrinthModpack != null) { MODRINTH_MODPACK = instance.modrinthModpack; };
     in {
       "${name}" = {
         inherit (instance) image;
+        inherit volumes;
         dependsOn = [ instance.tsContainerName ];
         extraOptions = [
           "--network=lan-bridge"
           "--ip=${instance.mcIp}"
         ];
-        volumes = [
-          "/appdata/${name}/data:/data"
-          "${modpack}:/data/mods"
-        ];
         environment = {
           EULA = "TRUE";
           TYPE = "FABRIC";
+          TZ = "America/New_York";
           VERSION = instance.environment.version;
           MEMORY = instance.environment.memory;
           JVM_OPTS = aikarFlags;
           ENABLE_AUTOPAUSE = "TRUE";
           MAX_TICK_TIME = "-1";
-          AUTOPAUSE_TIMEOUT_EST = "300";
+          AUTOPAUSE_TIMEOUT_EST = toString instance.environment.autopause;
           VIEW_DISTANCE = toString instance.environment.viewDistance;
           SIMULATION_DISTANCE = toString instance.environment.simulationDistance;
           OPS = instance.environment.admin;
           WHITELIST = instance.environment.whitelist;
           ENFORCE_WHITELIST = instance.environment.enforceWhitelist;
-        };
+          DIFFICULTY = instance.environment.difficulty;
+          MODE = instance.environment.mode;
+        } // modpackEnv;
       };
 
       "${instance.tsContainerName}" = {
@@ -123,9 +163,9 @@ let
         environment = {
           TS_AUTHKEY = "file:///run/secrets/tailscale_key";
           TS_STATE_DIR = "/var/lib/tailscale";
+          TS_STATEFUL_CONFIG = "true";
           TS_AUTH_ONCE = "true";
-          TS_USERSPACE = "false";
-          TS_HOSTNAME = name;
+          TS_HOSTNAME = instance.tsContainerName;
           TS_ROUTES = "${instance.mcIp}/32";
           TS_EXTRA_ARGS = "--snat-subnet-routes=true";
         };
