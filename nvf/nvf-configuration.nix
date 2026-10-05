@@ -50,7 +50,7 @@
     statusline = {
       lualine = {
         enable = true;
-        theme = "base16";
+        setupOpts.options.theme = "base16";
       };
     };
 

@@ -56,6 +56,7 @@
       # --- Startup Processes ---
       spawn-at-startup = [
         { command = [ "noctalia-shell" ]; }
+        { command = [ "dbus-update-activation-environment" "--systemd" "WAYLAND_DISPLAY" "XDG_CURRENT_DESKTOP" ];}
       ];
 
       hotkey-overlay.skip-at-startup = true;
