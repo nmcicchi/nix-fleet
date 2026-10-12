@@ -15,7 +15,7 @@
         cwa = {
           image = "crocodilestick/calibre-web-automated:latest";
           autoStart = true;
-          ports = [ "${fleetSettings.sequoia.ports.cwa}:8083" ];
+          ports = [ "${toString fleetSettings.sequoia.ports.cwa}:8083" ];
           environment = {
             PUID = "1000";
             PGID = "1000";
@@ -32,7 +32,7 @@
         kavita = {
           image = "lscr.io/linuxserver/kavita:latest";
           autoStart = true;
-          ports = [ "${fleetSettings.sequoia.ports.kavita}:5000" ];
+          ports = [ "${toString fleetSettings.sequoia.ports.kavita}:5000" ];
           environment = {
             PUID = "1000";
             PGID = "1000";
