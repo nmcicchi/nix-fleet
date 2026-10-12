@@ -31,6 +31,8 @@
       zigbee = 8125;
       matter = 5580;
       syncthing = 22000; #hardcoded atm
+      kavita = 5000;
+      cwa = 8083;
 
       # Infrastructure
       prometheus = {

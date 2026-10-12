@@ -20,6 +20,8 @@ let
     "glances"
     "lidarr"
     "zigbee"
+    "kavita"
+    "cwa"
   ]);
 
   # Non-standard or unique mappings that break the cookie-cutter pattern
