@@ -22,6 +22,7 @@ let
     "zigbee"
     "kavita"
     "cwa"
+    "qbit"
   ]);
 
   # Non-standard or unique mappings that break the cookie-cutter pattern

@@ -29,8 +29,8 @@
           job_name = "minecraft-lan-bridge";
           static_configs = [{
             targets = [
-              fleetSettings.sequoia.containers.mc-20.lan
-              fleetSettings.sequoia.containers.mc-26.lan
+              fleetSettings.sequoia.containers.mc-ts.lan
+              fleetSettings.sequoia.containers.mc-ts.lan
             ];
           }];
         }

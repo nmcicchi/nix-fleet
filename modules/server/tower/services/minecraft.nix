@@ -31,8 +31,8 @@ in
     "minecraft-26" = {
       enable = true;
       tsContainerName = "mc-ts";
-      mcIp = fleetSettings.sequoia.containers.mc-26.lan;
-      tsIp = fleetSettings.sequoia.containers.mc-26.router;
+      mcIp = fleetSettings.sequoia.containers.mc-ts.lan;
+      tsIp = fleetSettings.sequoia.containers.mc-ts.router;
       mods = mods26-1;
       
       environment = {

@@ -161,7 +161,6 @@ let
           "${config.sops.secrets.tailscale_key.path}:/run/secrets/tailscale_key:ro"
         ];
         environment = {
-          TS_AUTHKEY = "file:///run/secrets/tailscale_key";
           TS_STATE_DIR = "/var/lib/tailscale";
           TS_STATEFUL_CONFIG = "true";
           TS_AUTH_ONCE = "true";

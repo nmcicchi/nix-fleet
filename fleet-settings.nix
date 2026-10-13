@@ -8,7 +8,11 @@
 
     containers = {
       searxng = "192.168.5.101";
-      tail-torrent = "ca-tor-wg-001.mullvad.ts.net ";
+      tail-torrent = "100.111.245.115";
+      mc-ts = {
+        lan = "192.168.5.102";
+        router = "192.168.5.103";
+      };
     };
 
     ports = {
