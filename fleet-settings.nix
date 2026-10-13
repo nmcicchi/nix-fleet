@@ -8,16 +8,7 @@
 
     containers = {
       searxng = "192.168.5.101";
-      mc-20 = {
-        lan = "192.168.5.102";
-        router = "192.168.5.106";
-        tail = "";
-      };
-      mc-26 = {
-        lan = "192.168.5.103";
-        router = "192.168.5.104";
-        tail = "";
-      };
+      tail-torrent = "ca-tor-wg-001.mullvad.ts.net ";
     };
 
     ports = {
@@ -33,6 +24,7 @@
       syncthing = 22000; #hardcoded atm
       kavita = 5000;
       cwa = 8083;
+      qbit = 8088;
 
       # Infrastructure
       prometheus = {
