@@ -7,9 +7,6 @@
   qbitPort = toString fleetSettings.sequoia.ports.qbit;
   exitNode = fleetSettings.sequoia.containers.tail-torrent;
 
-  # Public Mullvad resolver. Reachable over the normal internet, so tailscaled
-  # (root, unrestricted) can bootstrap with it, while qBittorrent's lookups
-  # go out through the exit node.
   dns = "194.242.2.2";
 
   # UID/GID qBittorrent runs as *inside* the container (PUID/PGID)
@@ -36,9 +33,15 @@
     for ipt in iptables-nft ip6tables-nft; do
       $ipt -N QBIT_KILLSWITCH 2>/dev/null || $ipt -F QBIT_KILLSWITCH
       $ipt -A QBIT_KILLSWITCH -o lo -j ACCEPT
-      $ipt -A QBIT_KILLSWITCH -o tailscale0 -j ACCEPT
-      # WebUI replies to clients on the LAN
+      # WebUI replies to clients (LAN or tailnet via the host)
       $ipt -A QBIT_KILLSWITCH -p tcp --sport ${qbitPort} -j ACCEPT
+      # never reach tailnet peers
+      if [ "$ipt" = iptables-nft ]; then
+        $ipt -A QBIT_KILLSWITCH -d 100.64.0.0/10 -j REJECT
+      else
+        $ipt -A QBIT_KILLSWITCH -d fd7a:115c:a1e0::/48 -j REJECT
+      fi
+      $ipt -A QBIT_KILLSWITCH -o tailscale0 -j ACCEPT
       $ipt -A QBIT_KILLSWITCH -j REJECT
       $ipt -C OUTPUT -m owner --uid-owner ${toString puid} -j QBIT_KILLSWITCH 2>/dev/null || \
         $ipt -I OUTPUT 1 -m owner --uid-owner ${toString puid} -j QBIT_KILLSWITCH
@@ -91,8 +94,9 @@ in {
     dockerCompat = true;
   };
 
-  # needed for the kill switch's `-m owner` match
   boot.kernelModules = [ "xt_owner" "nf_tables" "nft_compat" "nft_reject_inet" ];
+
+  networking.firewall.allowedTCPPorts = [ fleetSettings.sequoia.ports.qbit ];
 
   systemd.services = {
     # Creates the pod (owns the shared netns) and the auth key env file
@@ -185,7 +189,8 @@ in {
         environmentFiles = [ "/run/tailscale-torrent/env" ];
         environment = {
           TS_STATE_DIR = "/var/lib/tailscale-torrent";
-          TS_EXTRA_ARGS = "--exit-node=${exitNode} --exit-node-allow-lan-access=false";
+          TS_EXTRA_ARGS = "--exit-node=${exitNode} --exit-node-allow-lan-access=true --shields-up";
+          TS_USERSPACE = "false";
         };
         extraOptions = [
           "--pod=torrent" # publish + dns are set on the pod itself
