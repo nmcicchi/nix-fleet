@@ -1,7 +1,7 @@
-# Uhh still under construction
 { config, pkgs, fleetSettings, lib, ... }: let
   user = "torrent";
-  uid = 1001;
+
+  inherit (fleetSettings.sequoia.users.torrent) uid subStart subCount;
   uidStr = toString uid;
 
   qbitPort = toString fleetSettings.sequoia.ports.qbit;
@@ -12,11 +12,7 @@
   # UID/GID qBittorrent runs as *inside* the container (PUID/PGID)
   puid = 1000;
 
-  # Subordinate ID range for rootless podman.
-  # Container UID 0 -> host `torrent` user.
   # Container UID N (N >= 1) -> host (subStart + N - 1).
-  subStart = 100000;
-  subCount = 65536;
   qbitHostId = toString (subStart + puid - 1); # container 1000 -> host 100999
 
   podman = "${config.virtualisation.podman.package}/bin/podman";
@@ -68,7 +64,7 @@ in {
     directories = [
       "/var/lib/tailscale-torrent"
       # rootless podman image/container storage lives here
-      { directory = "/home/${user}"; user = user; group = user; mode = "0700"; }
+      { directory = "/home/${user}"; inherit user; group = user; mode = "0700"; }
     ];
   };
 

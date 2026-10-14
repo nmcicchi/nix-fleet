@@ -6,6 +6,24 @@
     tail = "100.64.133.113"; # this is critical for adguard to work
     shim = "192.168.6.200";
 
+    users = {
+      hypermind = {
+        uid = 1002;
+        subStart = 20000;
+        subCount = 65536;
+      };
+      torrent = {
+        uid = 1001;
+        subStart = 10000;
+        subCount = 65536;
+      };
+      matter = {
+        uid = 1003;
+        subStart = 30000;
+        subCount = 65536;
+      };
+    };
+
     containers = {
       searxng = "192.168.5.101";
       tail-torrent = "100.111.245.115";

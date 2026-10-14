@@ -1,24 +1,47 @@
-{ fleetSettings, ... }: {
-  virtualisation.oci-containers.backend = "podman";
+{ fleetSettings, ... }: let
+  user = "matter";
+in {
+  imports = [
+    (import ../../../../lib/mkPod.nix{
+      name = user;
+      inherit (fleetSettings.sequoia.users.matter) uid subStart subCount;
+    })
+  ];
 
-  virtualisation.oci-containers.containers.matter-server = {
-    image = "ghcr.io/home-assistant-libs/python-matter-server:stable";
-    autoStart = true;
-    
-    # Host networking gives the container direct access to IPv6 & mDNS traffic
-    extraOptions = [
-      "--network=host"
-    ];
+  virtualisation = {
+    oci-containers = {
+      backend = "podman";
 
-    volumes = [
-      # Store state directly on /persist to bypass tmpfs root impermanence
-      "/persist/var/lib/matter-server:/data"
-    ];
+      containers.matter-server = {
+        podman.user = user;
+        image = "ghcr.io/home-assistant-libs/python-matter-server:stable";
+        autoStart = true;
+        
+        extraOptions = [
+          "--network=host"
+        ];
 
-    environment = {
-      PORT = toString fleetSettings.sequoia.ports.matter;
+        volumes = [
+          "/var/lib/matter-server:/data"
+        ];
+
+        environment = {
+          PORT = toString fleetSettings.sequoia.ports.matter;
+        };
+      };
     };
   };
+
+  environment.persistence."/persist" = {
+    directories = [
+      { directory = "/var/lib/matter-server"; inherit user; group = user; mode = "0700"; }
+    ];
+  };
+
+  systemd.tmpfiles.rules = [
+    "d /var/lib/matter-server 0700 ${user} ${user} -"
+    "Z /var/lib/matter-server - ${user} ${user} -"
+  ];
 
   # Host network configuration
   networking = {

@@ -1,12 +1,19 @@
-{ fleetSettings, ... }: {
+{ fleetSettings, ... }: let
+  user = "hypermind";
+
+in {
+  imports = [
+    (import ../../../../lib/mkPod.nix {
+      name = user;
+      inherit (fleetSettings.sequoia.users.hypermind) uid subStart subCount;
+    })
+  ];
   virtualisation.oci-containers = {
     backend = "podman";
     containers = {
-
-      # Original Hypermind
       hypermind = {
+        podman.user = user;
         image = "ghcr.io/lklynet/hypermind:latest";
-        # use host networking for Hyperswarm DHT to find peers
         extraOptions = [ "--network=host" ];
         environment = {
           PORT = toString fleetSettings.sequoia.ports.hypermind;
@@ -15,14 +22,14 @@
         };
       };
 
-      # Hypermind Swarm
       hypermind-swarm = {
+        podman.user = user;
         image = "ghcr.io/lklynet/hypermind-swarm:latest";
         extraOptions = [ "--network=host" ];
         environment = {
           PORT = toString fleetSettings.sequoia.ports.hyperswarm;
         };
-      }; 
+      };
     };
   };
 }
