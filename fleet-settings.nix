@@ -22,6 +22,16 @@
         subStart = 30000;
         subCount = 65536;
       };
+      home-automation = {
+        uid = 1004;
+        subStart = 4000;
+        subCount = 65536;
+      };
+      library = {
+        uid = 1005;
+        subStart = 5000;
+        subCount = 65536;
+      };
     };
 
     containers = {

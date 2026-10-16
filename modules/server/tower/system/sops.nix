@@ -25,12 +25,6 @@ _: {
         group = "root";
       };
 
-      sabnzbd_secrets = {
-        sopsFile = towerSecrets;
-        owner = "sabnzbd";
-        group = "media";
-      };
-
       restic_media_password = {
         sopsFile = towerSecrets;
       };
