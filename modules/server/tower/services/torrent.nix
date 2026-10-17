@@ -158,13 +158,16 @@ in {
       script = ''
         fails=0
         while true; do
-          if ${asTorrent} exec tailscale-torrent wget -qO- -T 10 https://am.i.mullvad.net/json 2>/dev/null \
-              | grep -Eq '"mullvad_exit_ip"[[:space:]]*:[[:space:]]*true'; then
+          out=$(${asTorrent} exec tailscale-torrent wget -qO- -T 10 https://am.i.mullvad.net/json 2>&1) && rc=0 || rc=$?
+          if echo "$out" | grep -Eq '"mullvad_exit_ip"[[:space:]]*:[[:space:]]*true'; then
             fails=0
-            systemctl is-active --quiet podman-qbittorrent.service \
-              || systemctl start podman-qbittorrent.service
+            if ! systemctl is-active --quiet podman-qbittorrent.service; then
+              echo "mullvad ok, starting qbittorrent"
+              systemctl start podman-qbittorrent.service || echo "start failed"
+            fi
           else
             fails=$((fails + 1))
+            echo "check failed (rc=$rc, fails=$fails): $(echo "$out" | head -c 300)"
             if [ "$fails" -ge 2 ]; then
               systemctl stop podman-qbittorrent.service
             fi

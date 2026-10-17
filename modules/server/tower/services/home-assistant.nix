@@ -3,9 +3,9 @@
   cfg = fleetSettings.sequoia.users.${user};
 
   # Shifted host IDs for internal container users
-  z2mHostId  = toString (cfg.subStart + 1000 - 1);
   mosqHostId = toString (cfg.subStart + 1883 - 1);
-  hassUid    = cfg.uid;
+  hassUid = cfg.uid;
+  z2mHostId = toString cfg.uid;
 
   mosquittoConf = pkgs.writeText "mosquitto.conf" ''
     listener 1883 0.0.0.0
@@ -116,13 +116,13 @@ in {
   # Declaratively provision permissions with correct shifted host UIDs
   systemd.tmpfiles.rules = [
     "d /var/lib/home-automation 0750 ${toString hassUid} ${toString hassUid} -"
-    "d /var/lib/home-automation/home-assistant 0750 ${toString hassUid} ${toString hassUid} -"
+    "Z /var/lib/home-automation/home-assistant 0750 ${toString hassUid} ${toString hassUid} -"
     
     "d /var/lib/home-automation/mosquitto 0750 ${mosqHostId} ${mosqHostId} -"
-    "d /var/lib/home-automation/mosquitto/data 0750 ${mosqHostId} ${mosqHostId} -"
-    "d /var/lib/home-automation/mosquitto/log 0750 ${mosqHostId} ${mosqHostId} -"
+    "Z /var/lib/home-automation/mosquitto/data - ${mosqHostId} ${mosqHostId} -"
     
     "d /var/lib/home-automation/zigbee2mqtt 0750 ${z2mHostId} ${z2mHostId} -"
+    "Z /var/lib/home-automation/zigbee2mqtt - ${z2mHostId} ${z2mHostId} -"
     "C /var/lib/home-automation/zigbee2mqtt/configuration.yaml 0644 ${z2mHostId} ${z2mHostId} - ${z2mConf}"
   ];
 
