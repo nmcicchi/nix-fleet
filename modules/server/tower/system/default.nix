@@ -1,6 +1,6 @@
 { loadModules, ... }:
 {
-  imports = loadModules ./. ++ [ ../../shared/default.nix ];
+  imports = loadModules ./.;
   
   mySystem.networking.enable = true;
 }

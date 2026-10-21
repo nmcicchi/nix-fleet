@@ -114,8 +114,6 @@
         system = "x86_64-linux";
         pkgsInput = nixpkgs;
         overlays = [
-            (import ./overlays/flameshot.nix)
-            (import ./overlays/qutebrowser.nix)
             (import ./overlays/steam.nix)
             (import ./overlays/unstable.nix { inherit nixpkgs-unstable; } )
         ];
@@ -159,6 +157,7 @@
         pkgsInput = nixpkgs;
         modules = [
           ./modules/server/tower
+          ./modules/server/shared
           inputs.sops-nix.nixosModules.default
           inputs.disko.nixosModules.default
           inputs.arion.nixosModules.arion
@@ -175,6 +174,8 @@
         pkgsInput = nixpkgs;
         modules = [
           ./modules/server/assistant
+          ./modules/server/pis
+          ./modules/server/shared
           inputs.sops-nix.nixosModules.default
 
           # makes it so can build sd images
@@ -214,6 +215,7 @@
         cudaSupport = true;
         modules = [
             ./modules/server/ai
+            ./modules/server/shared
             inputs.sops-nix.nixosModules.default
         ];
       };

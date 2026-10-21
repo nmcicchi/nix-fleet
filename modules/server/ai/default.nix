@@ -1,5 +1,5 @@
 { loadModules, ... }: {
-  imports = loadModules ./. ++ [../shared];
+  imports = loadModules ./.;
   
   mySystem.networking = {
     enable = true;

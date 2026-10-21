@@ -3,7 +3,7 @@
 {
   sequoia = {
     lan = "192.168.5.100";
-    tail = "100.64.133.113"; # this is critical for adguard to work
+    #tail = "100.64.133.113"; # this is critical for adguard to work
     shim = "192.168.6.200";
 
     users = {
@@ -123,5 +123,6 @@
     dns = [ "192.168.4.1" "1.1.1.1" ];
     ssid = "MikroTik-75856A";
     tz = "America/New_York";
+    adguard = "192.168.5.1";
   };
 }
