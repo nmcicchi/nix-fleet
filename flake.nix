@@ -42,6 +42,16 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    concord = {
+      url = "github:chojs23/concord";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    watui = {
+      url = "github:Arun0A/watui";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     monique = {
       url = "github:ToRvaLDz/monique";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -116,6 +126,7 @@
         overlays = [
             (import ./overlays/steam.nix)
             (import ./overlays/unstable.nix { inherit nixpkgs-unstable; } )
+            (import ./overlays/packages.nix { inherit inputs; } )
         ];
         modules = [
           ./modules/pc/laptop
