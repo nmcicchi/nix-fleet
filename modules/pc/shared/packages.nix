@@ -14,16 +14,13 @@
     tailspin # log highlighter
     wiremix # audio output tui
     home-manager # dont delete this
-  ];
 
-  unstable = with pkgs.unstable; [
-    yazi # file manager
-    noctalia-shell
+    unstable.noctalia-shell
   ];
   
   nvfPkg = nvfFN pkgs.unstable;
 in {
-  environment.systemPackages = stable ++ unstable ++ [ nvfPkg ];
+  environment.systemPackages = stable ++ [ nvfPkg ];
 
   services.flatpak = {
     enable = true;

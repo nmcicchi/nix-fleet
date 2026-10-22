@@ -42,11 +42,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    concord = {
-      url = "github:chojs23/concord";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     watui = {
       url = "github:Arun0A/watui";
       inputs.nixpkgs.follows = "nixpkgs";
