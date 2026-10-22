@@ -122,6 +122,7 @@
             (import ./overlays/steam.nix)
             (import ./overlays/unstable.nix { inherit nixpkgs-unstable; } )
             (import ./overlays/packages.nix { inherit inputs; } )
+            (import ./overlays/python-pin.nix)
         ];
         modules = [
           ./modules/pc/laptop
@@ -240,7 +241,7 @@
       };
 
       "nic@cedar" = {
-        pkgs = self.nixosConfigurations.cedar.pkgs
+        pkgs = self.nixosConfigurations.cedar.pkgs;
         modules = [
           ./modules/home/shared
           ./modules/home/cedar
