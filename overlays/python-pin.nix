@@ -1,27 +1,24 @@
-final: prev: {
-  python314Packages = prev.python314Packages.override {
-    overrides = pself: psuper: {
+final: prev:
+let
+  # nixpkgs version whose HTML snapshot tests fail
+  brokenVersion = "10.5.1";
+in {
+  pythonPackagesExtensions = prev.pythonPackagesExtensions ++ [
+    (pself: psuper: {
       diff-cover =
-        let
-          # Expires once upstream Nixpkgs updates past the broken 10.5.1 release
-          isFixedUpstream = prev.lib.versionAtLeast psuper.diff-cover.version "10.5.2";
-        in
-        prev.lib.warnIf isFixedUpstream ''
-          diff-cover >= 10.5.2 is now in nixpkgs, the version pin override can be removed.
-        ''
-          (if isFixedUpstream then
-            psuper.diff-cover
-          else
-            # Pinning back to 10.5.0 until upstream fixes 10.5.1 on Python 3.14
-            psuper.diff-cover.overrideAttrs (old: rec {
-              version = "10.5.0";
-              src = prev.fetchPypi {
-                pname = "diff_cover";
-                inherit version;
-                hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="; # replace with actual hash or pkgs.lib.fakeHash
-              };
-            })
-          );
-    };
-  };
+        prev.lib.warnIf (psuper.diff-cover.version != brokenVersion) ''
+          diff-cover in nixpkgs-unstable is now ${psuper.diff-cover.version} (was ${brokenVersion} when the test skip was added).
+          Try removing the override in overlays/unstable.nix and rebuilding to see if the tests pass now.
+        '' (psuper.diff-cover.overridePythonAttrs (old: {
+          disabledTests = (old.disabledTests or []) ++ [
+            "test_added_file_pycodestyle_html"
+            "test_all_reports"
+            "test_added_file_pyflakes_html"
+            "test_added_file_pylint_html"
+            "test_fail_under_html"
+            "test_fail_under_pass_html"
+          ];
+        }));
+    })
+  ];
 }

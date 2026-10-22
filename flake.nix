@@ -143,6 +143,7 @@
         pkgsInput = nixpkgs;
         overlays = [
           (import ./overlays/unstable.nix { inherit nixpkgs-unstable; } )
+          (import ./overlays/python-pin.nix )
         ];
         modules = [
           ./modules/pc/shared

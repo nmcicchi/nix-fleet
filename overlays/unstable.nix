@@ -5,5 +5,9 @@ final: prev: {
     system = prev.system;
 
     config = { allowUnfree = true; };
+
+    overlays = [
+      (import ./python-pin.nix)
+    ];
   };
 }

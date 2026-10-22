@@ -15,7 +15,7 @@
     wiremix # audio output tui
     home-manager # dont delete this
 
-    unstable.noctalia-shell
+    noctalia-shell
   ];
   
   nvfPkg = nvfFN pkgs.unstable;
