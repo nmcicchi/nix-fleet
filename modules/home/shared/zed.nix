@@ -2,17 +2,44 @@
   programs.zed-editor = {
     enable = true;
 
-    package = pkgs.unstable.zed;
+    package = pkgs.unstable.zed-editor;
 
     userSettings = {
       vim_mode = true;
+
+      assistant = {
+        enabled = false;
+      };
+
+      terminal = {
+        detect_venv = {
+          on = {
+            directories = [ ".env" "env" ".venv" "venv" ];
+            activate_script = "default";
+          };
+        };
+        env = {
+          TERM = "alacritty";
+        };
+        font_family = "FiraCode Nerd Font";
+        font_features = null;
+        font_size = null;
+        line_height = "comfortable";
+        option_as_meta = false;
+        button = false;
+        shell = "system";
+        toolbar = {
+          title = true;
+        };
+        working_directory = "current_project_directory";
+      };
 
       tab_size = 2;
       hard_tabs = false;
 
       format_on_save = "on";
 
-      # Typography scaling
+      show_whitespaces = "all";
       buffer_font_size = 14.0;
       ui_font_size = 15;
 
@@ -22,10 +49,22 @@
         light = "One Light";
       };
 
+      lsp = {
+        nix = {
+          binary = {
+            # path = lib.getExe pkgs.nix;
+            path_lookup = true;
+          };
+        };
+      };
+
       telemetry = {
         metrics = false;
         diagnostics = false;
       };
+
+      load_direnv = "shell_hook";
+      base_keymap = "VSCode";
     };
 
     userKeymaps = [
@@ -40,20 +79,7 @@
 
     extensions = [
       "nix"
-      #  "toml"
-      #  "html"
-      #  "css"
-      #  "json"
-      #  "yaml"
-      #  "python"
-      #  "java"
       "markdown"
     ];
-  };
-
-  xdg.configFile."zed/themes/base16-custom.json".text = builtins.toJSON {
-    "$schema" = "https://zed.dev/schema/themes/v0.2.0.json";
-    name = "Base16 Custom";
-    author = "Nic";
   };
 }

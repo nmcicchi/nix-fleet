@@ -27,7 +27,7 @@
       url="github:uiriansan/SilentSDDM";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    
+
     nix-flatpak = {
       url = "github:gmodena/nix-flatpak/?ref=latest";
     };
@@ -66,7 +66,7 @@
       url = "github:hercules-ci/arion";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-   
+
   };
 
   outputs = {
@@ -80,7 +80,7 @@
   }@inputs: let
 
     # a function for creating nvf
-    nvfFN = systemPkgs: 
+    nvfFN = systemPkgs:
       (nvf.lib.neovimConfiguration {
         pkgs = systemPkgs;
         modules = [./nvf/nvf-configuration.nix];
@@ -131,7 +131,7 @@
           inputs.sops-nix.nixosModules.default
           inputs.monique.nixosModules.default
         ];
-        extraSpecialArgs = { 
+        extraSpecialArgs = {
           inherit nvfFN;
         };
       };
@@ -151,7 +151,7 @@
           inputs.monique.nixosModules.default
           inputs.silentSDDM.nixosModules.default
         ];
-        extraSpecialArgs = { 
+        extraSpecialArgs = {
           inherit nvfFN;
         };
       };
@@ -240,7 +240,7 @@
       };
 
       "nic@cedar" = {
-        pkgs = self.nixosConfigurations.cedar.pkgs;
+        pkgs = self.nixosConfigurations.cedar.pkgs
         modules = [
           ./modules/home/shared
           ./modules/home/cedar
