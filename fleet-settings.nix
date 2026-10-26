@@ -7,33 +7,32 @@
     shim = "192.168.6.200";
 
     users = {
-      hypermind = {
-        uid = 1002;
-        subStart = 20000;
-        subCount = 65536;
+      hypermind = { 
+        uid = 1002; 
+        subStart = 100000; 
+        subCount = 65536; 
       };
-      torrent = {
-        uid = 1001;
-        subStart = 10000;
-        subCount = 65536;
+      torrent = { 
+        uid = 1001; 
+        subStart = 165536; 
+        subCount = 65536; 
       };
-      matter = {
-        uid = 1003;
-        subStart = 30000;
-        subCount = 65536;
+      matter = { 
+        uid = 1003; 
+        subStart = 231072; 
+        subCount = 65536; 
       };
-      home-automation = {
-        uid = 1004;
-        subStart = 4000;
-        subCount = 65536;
+      home-automation = { 
+        uid = 1004; 
+        subStart = 296608; 
+        subCount = 65536; 
       };
-      library = {
-        uid = 1005;
-        subStart = 5000;
-        subCount = 65536;
-      };
+      library = { 
+        uid = 1005; 
+        subStart = 362144; 
+        subCount = 65536; 
+      };    
     };
-
     containers = {
       searxng = "192.168.5.101";
       tail-torrent = "100.111.245.115";

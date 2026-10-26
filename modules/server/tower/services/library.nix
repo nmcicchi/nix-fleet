@@ -69,7 +69,6 @@ in {
     "Z /var/lib/kavita - ${hostId} ${hostId} -"
 
     "d /media/ebooks 0775 ${hostId} ${hostId} -"
-    "d /media/ebooks/ingest 0775 ${hostId} ${hostId} -"
-    "d /media/ebooks/library 0775 ${hostId} ${hostId} -"
+    "Z /media/ebooks 0775 ${hostId} ${hostId} -"
   ];
 }

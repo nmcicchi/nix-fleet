@@ -116,9 +116,12 @@ in {
   # Declaratively provision permissions with correct shifted host UIDs
   systemd.tmpfiles.rules = [
     "d /var/lib/home-automation 0750 ${toString hassUid} ${toString hassUid} -"
+    "d /var/lib/home-automation/home-assistant 0750 ${toString hassUid} ${toString hassUid} -"
     "Z /var/lib/home-automation/home-assistant 0750 ${toString hassUid} ${toString hassUid} -"
     
     "d /var/lib/home-automation/mosquitto 0750 ${mosqHostId} ${mosqHostId} -"
+    "d /var/lib/home-automation/mosquitto/data 0750 ${mosqHostId} ${mosqHostId} -"
+    "d /var/lib/home-automation/mosquitto/log 0750 ${mosqHostId} ${mosqHostId} -"
     "Z /var/lib/home-automation/mosquitto/data - ${mosqHostId} ${mosqHostId} -"
     
     "d /var/lib/home-automation/zigbee2mqtt 0750 ${z2mHostId} ${z2mHostId} -"
