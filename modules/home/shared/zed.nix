@@ -52,8 +52,7 @@
       lsp = {
         nix = {
           binary = {
-            # path = lib.getExe pkgs.nix;
-            path_lookup = true;
+            path = "${pkgs.nil}/bin/nil";
           };
         };
       };
@@ -73,20 +72,6 @@
         bindings = {
           "space f f" = "file_finder::Toggle";
           "space e" = "project_panel::ToggleFocus";
-          "space r" = [
-            "task::Spawn"
-            {
-              task_name = "Java: Run Main (Current File)";
-              reveal_target = "bottom";
-            }
-          ];
-          "space t" = [
-            "task::Spawn"
-            {
-              task_name = "Java: Run JUnit Test (Current File)";
-              reveal_target = "bottom";
-            }
-          ];
         };
       }
     ];    
