@@ -3,7 +3,7 @@
 {
   sequoia = {
     lan = "192.168.5.100";
-    tail = "100.64.133.113"; # this is critical for adguard to work
+    tail = "100.118.111.62"; # this is critical for adguard to work
     shim = "192.168.6.200";
 
     users = {
@@ -48,14 +48,16 @@
       sabnzbd = 8085;
       lidarr = 8686;
       prowlarr = 9696;
-      homeassistant = 8123; # forced cause docker
-      mosquitto = 1883;
-      zigbee = 8125;
-      matter = 5580;
       syncthing = 22000; #hardcoded atm
       kavita = 5000;
       cwa = 8083;
       qbit = 8088;
+
+      #Home home-automation
+      homeassistant = 8123; # forced cause docker
+      mosquitto = 1883;
+      zigbee = 8125;
+      matter = 5580;
 
       # Infrastructure
       prometheus = {

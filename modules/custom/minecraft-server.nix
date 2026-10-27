@@ -148,6 +148,7 @@ let
 
       "${instance.tsContainerName}" = {
         image = "tailscale/tailscale:latest";
+        environmentFiles = [ "/run/${instance.tsContainerName}/env" ];
         extraOptions = [
           "--network=lan-bridge"
           "--ip=${instance.tsIp}"
@@ -158,7 +159,6 @@ let
         ];
         volumes = [
           "${instance.tsStateDir}:/var/lib/tailscale"
-          "${config.sops.secrets.tailscale_key.path}:/run/secrets/tailscale_key:ro"
         ];
         environment = {
           TS_STATE_DIR = "/var/lib/tailscale";
@@ -178,6 +178,10 @@ let
       preStart = mkBefore ''
         mkdir -p ${escapeShellArg instance.tsStateDir}
         chmod 700 ${escapeShellArg instance.tsStateDir}
+
+        umask 077
+        printf 'TS_AUTHKEY=%s\n' "$(tr -d '\n' < ${config.sops.secrets.tailscale_key.path})" \
+          > /run/${instance.tsContainerName}/env
       '';
     };
 

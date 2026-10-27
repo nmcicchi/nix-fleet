@@ -13,7 +13,7 @@
   puid = 1000;
 
   # Container UID N (N >= 1) -> host (subStart + N - 1).
-  qbitHostId = toString (subStart + puid - 1); # container 1000 -> host 100999
+  qbitHostId = toString (subStart + puid - 1);
 
   podman = "${config.virtualisation.podman.package}/bin/podman";
 
@@ -44,29 +44,21 @@
     done
   '';
 in {
-  # User + secrets + persistence
-  users.groups.${user} = { };
-  users.users.${user} = {
-    isNormalUser = true;
-    inherit uid;
-    group = user;
-    linger = true; # keep /run/user/<uid> alive without a login session
-    subUidRanges = [{ startUid = subStart; count = subCount; }];
-    subGidRanges = [{ startGid = subStart; count = subCount; }];
-  };
+  imports = [
+    (import ../../../../lib/mkPod.nix {
+      name = user;
+      inherit uid subStart subCount;
+    })
+  ];
 
   sops.secrets.tailscale_torrent_key = {
     sopsFile = ../../../../secrets/tower.yaml;
-    owner = user; # the podman units now run as this user
+    owner = user; # the podman units run as this user
   };
 
-  environment.persistence."/persist" = {
-    directories = [
-      "/var/lib/tailscale-torrent"
-      # rootless podman image/container storage lives here
-      { directory = "/home/${user}"; inherit user; group = user; mode = "0700"; }
-    ];
-  };
+  environment.persistence."/persist".directories = [
+    "/var/lib/tailscale-torrent"
+  ];
 
   # Directories (managed by tmpfiles)
   #   d = create if missing, Z = recursively (re)apply ownership
@@ -75,20 +67,14 @@ in {
     "d /var/lib/tailscale-torrent 0700 ${user} ${user} -"
     "Z /var/lib/tailscale-torrent - ${user} ${user} -"
 
-    # qbittorrent: container UID/GID 1000 == host 100999
+    # qbittorrent: container UID/GID 1000 == host subStart + 999
     "d /appdata/qbittorrent 0750 ${qbitHostId} ${qbitHostId} -"
     "Z /appdata/qbittorrent - ${qbitHostId} ${qbitHostId} -"
 
-    # No recursive Z here (could be huge / slow); do a one-time chown for
-    # existing data, see migration notes.
+    # No recursive Z here (could be huge / slow); do a one-time chown -R of
+    # existing data to ${qbitHostId} when changing subStart.
     "d /media/downloads 0775 ${qbitHostId} ${qbitHostId} -"
   ];
-
-  # Podman (rootless)
-  virtualisation.podman = {
-    enable = true;
-    dockerCompat = true;
-  };
 
   boot.kernelModules = [ "xt_owner" "nf_tables" "nft_compat" "nft_reject_inet" ];
 
@@ -97,10 +83,6 @@ in {
   systemd.services = {
     # Creates the pod (owns the shared netns) and the auth key env file
     podman-tailscale-torrent = {
-      requires = [ "user-runtime-dir@${uidStr}.service" ];
-      after = [ "user-runtime-dir@${uidStr}.service" ];
-      environment.XDG_RUNTIME_DIR = "/run/user/${uidStr}";
-      path = [ "/run/wrappers" ]; # newuidmap / newgidmap
       serviceConfig = {
         RuntimeDirectory = "tailscale-torrent"; # /run/tailscale-torrent, owned by `torrent`
         RuntimeDirectoryMode = "0700";
@@ -117,14 +99,12 @@ in {
       '';
     };
 
-    # qBittorrent never starts at boot on its own: only after the kill switch
-    # is installed, and only when the watchdog says we're exiting via Mullvad.
+    # qBittorrent never starts at boot on its own (autoStart = false below):
+    # only after the kill switch is installed, and only when the watchdog says
+    # we're exiting via Mullvad.
     podman-qbittorrent = {
-      requires = [ "user-runtime-dir@${uidStr}.service" "qbit-killswitch.service" ];
-      after = [ "user-runtime-dir@${uidStr}.service" "qbit-killswitch.service" ];
-      environment.XDG_RUNTIME_DIR = "/run/user/${uidStr}";
-      path = [ "/run/wrappers" ];
-      wantedBy = lib.mkForce [ ];
+      requires = [ "qbit-killswitch.service" ];
+      after = [ "qbit-killswitch.service" ];
     };
 
     # Install firewall rules inside the pod's netns
@@ -204,6 +184,7 @@ in {
       qbittorrent = {
         podman.user = user;
         image = "lscr.io/linuxserver/qbittorrent:latest";
+        autoStart = false; # started by qbit-vpn-watchdog
         dependsOn = [ "tailscale-torrent" ];
         environment = {
           PUID = toString puid;
