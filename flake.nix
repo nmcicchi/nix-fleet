@@ -248,6 +248,7 @@
           ./modules/home/cedar
           inputs.niri.homeModules.niri
           inputs.zen-browser.homeModules.twilight
+          inputs.sops-nix.homeManagerModules.sops
         ];
         extraSpecialArgs = { inherit nur; };
       };

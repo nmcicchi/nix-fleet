@@ -1,10 +1,16 @@
 { pkgs, lib, config, ... }: {
-  home.packages = [ pkgs.unstable.concord ];
-
-  # probably need to pass sops in hm?
+  # Define the sops secret
   sops.secrets.discord_token = {
-    owner = "nic";
+    owner = config.home.username;
   };
+
+  # Wrap concord to automatically supply the token from sops-nix at runtime
+  home.packages = [
+    (pkgs.writeShellScriptBin "concord" ''
+      export CONCORD_TOKEN="$(cat ${config.sops.secrets.discord_token.path})"
+      exec ${pkgs.unstable.concord}/bin/concord "$@"
+    '')
+  ];
 
   xdg.configFile."concord/config.toml".text = lib.generators.toTOML {} {
     display = {
