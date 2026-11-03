@@ -1,7 +1,7 @@
 _:{
   nix.settings = {
     # Keep trusted-users restricted to root
-    trusted-users = [ "root" ];
+    trusted-users = [ "root" "nic" ];
 
     # Globally allow these caches so any user can pull from them safely
     substituters = [
@@ -11,12 +11,18 @@ _:{
       "https://nixos-raspberrypi.cachix.org"
     ];
 
+    trusted-substituters = [
+      "https://cache.nixos.org" # Default
+      "https://devenv.cachix.org" # Devenv
+    ];
+
     # Explicitly trust the corresponding public keys
     trusted-public-keys = [
       "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY=" # Default
       "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
       "cache.nixos-cuda.org:74DUi4Ye579gUqzH4ziL9IyiJBlDpMRn9MBN8oNan9M="
       "nixos-raspberrypi.cachix.org-1:4iMO9LXa8BqhU+Rpg6LQKiGa2lsNh/j2oiYLNOQ5sPI="
+      "devenv.cachix.org-1:w1cLUi8dv3hnoSPGAJgkq2d+yYBoBKuJBsXjAA0iGRQ="
     ];
   };
 }

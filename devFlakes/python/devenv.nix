@@ -16,6 +16,7 @@ in
     # Core CLI utilities
     git
     curl
+    stdenv.cc.cc.lib
   ];
 
   # Python & Data Science Environment
@@ -28,7 +29,7 @@ in
     ];
 
     # Installs Python packages directly via Nix
-    package = pkgs.python3.withPackages (ps: with ps; [
+    package = pkgs.python312.withPackages (ps: with ps; [
       flake8
       pep8-naming
     ]);

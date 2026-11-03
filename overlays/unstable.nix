@@ -7,7 +7,7 @@ final: prev: {
     config = { allowUnfree = true; };
 
     overlays = [
-      (import ./python-pin.nix)
+      #(import ./python-pin.nix)
     ];
   };
 }

@@ -1,7 +1,15 @@
 { pkgs, lib, config, ... }: {
+  # It doesnt know what sops is
   # Define the sops secret
-  sops.secrets.discord_token = {
-    owner = config.home.username;
+  sops = {
+
+    defaultSymlinkPath = "/run/user/1000/secrets";
+    defaultSecretsMountPoint = "/run/user/1000/secrets.d";
+
+    secrets.discord_token = {
+      owner = config.home.username;
+      sopsFile = ../../../secrets/laptop.yaml;
+    };
   };
 
   # Wrap concord to automatically supply the token from sops-nix at runtime
