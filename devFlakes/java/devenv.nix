@@ -14,7 +14,6 @@ in
   languages.java = {
     enable = true;
     jdk.package = pkgs.jdk21;
-    maven.enable = true;
   };
 
   env = {
@@ -33,6 +32,5 @@ ${vscodeExtensionsJson}EOF
 
     echo "☕ Java Development Shell Ready"
     echo "JDK: $(java -version 2>&1 | head -n 1)"
-    echo "Maven: $(mvn --version | head -n 1)"
   '';
 }

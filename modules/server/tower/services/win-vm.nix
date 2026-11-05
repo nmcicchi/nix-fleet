@@ -20,4 +20,27 @@
   ];
 
   networking.firewall.trustedInterfaces = [ "virbr0" ];
+
+  environment.persistence."/persistent" = {
+    directories = [
+      "/etc/libvirt"
+      "/var/lib/libvirt"
+    ];
+  };
+
+  # Creates a dedicated bridge for the plc that does not touch the host os or get an ip on the lan
+  networking.bridges = {
+    plc-br.interfaces = [ "eno2" ]; # Dedicated physical port for plc
+  };
+  systemd.services.systemd-networkd-wait-online.serviceConfig.ExecStart = [
+    ""
+    "${pkgs.systemd}/lib/systemd/systemd-networkd-wait-online --ignored=plc-br"
+  ];
+  # Commands to start virtual net
+  # sudo virsh net-start default
+  # sudo virsh net-autostart default
+
+  # Commands to remove virtual net
+  # sudo virsh net-destroy default
+  # sudo virsh net-undefine default
 }

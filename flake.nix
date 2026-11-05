@@ -61,12 +61,6 @@
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-
-    arion = {
-      url = "github:hercules-ci/arion";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
   };
 
   outputs = {
@@ -168,7 +162,6 @@
           ./modules/server/shared
           inputs.sops-nix.nixosModules.default
           inputs.disko.nixosModules.default
-          inputs.arion.nixosModules.arion
           inputs.impermanence.nixosModules.impermanence
         ];
         overlays = [
