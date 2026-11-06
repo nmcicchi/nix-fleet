@@ -9,4 +9,9 @@
     spice-gtk
     usbredir
   ];
+
+  services.flatpak.packages = [
+    "com.rustdesk.RustDesk"
+  ];
+
 }
