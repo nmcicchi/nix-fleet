@@ -9,11 +9,12 @@
 
   dns = "194.242.2.2";
 
-  # UID/GID qBittorrent runs as *inside* the container (PUID/PGID)
+  # UID/GID qBittorrent runs as inside the container (PUID/PGID)
   puid = 1000;
 
   # Container UID N (N >= 1) -> host (subStart + N - 1).
-  qbitHostId = toString (subStart + puid - 1);
+  qbitHostIdInt = subStart + puid - 1;
+  qbitHostId = toString qbitHostIdInt;
 
   podman = "${config.virtualisation.podman.package}/bin/podman";
 
@@ -51,6 +52,11 @@ in {
     })
   ];
 
+  # Host-side group whose GID equals qBittorrent's in-container GID (as seen
+  # from the host). Any host service that needs to touch downloads (Lidarr,
+  # Sonarr, Radarr, ...) just adds "downloads" to its extraGroups.
+  users.groups.downloads.gid = qbitHostIdInt;
+
   sops.secrets.tailscale_torrent_key = {
     sopsFile = ../../../../secrets/tower.yaml;
     owner = user; # the podman units run as this user
@@ -60,8 +66,6 @@ in {
     "/var/lib/tailscale-torrent"
   ];
 
-  # Directories (managed by tmpfiles)
-  #   d = create if missing, Z = recursively (re)apply ownership
   systemd.tmpfiles.rules = [
     # tailscale: container root == host `torrent`
     "d /var/lib/tailscale-torrent 0700 ${user} ${user} -"
@@ -73,7 +77,9 @@ in {
 
     # No recursive Z here (could be huge / slow); do a one-time chown -R of
     # existing data to ${qbitHostId} when changing subStart.
-    "d /media/downloads 0775 ${qbitHostId} ${qbitHostId} -"
+    # 2775: setgid so new subdirs keep the `downloads` group; group-writable
+    # so the *arr apps can import (move) and clean up.
+    "d /media/downloads 2775 ${qbitHostId} ${qbitHostId} -"
   ];
 
   boot.kernelModules = [ "xt_owner" "nf_tables" "nft_compat" "nft_reject_inet" ];
@@ -136,28 +142,84 @@ in {
       path = [ pkgs.systemd pkgs.gnugrep pkgs.coreutils ];
       serviceConfig = { Restart = "always"; RestartSec = 5; };
       script = ''
-        fails=0
+        set +e            # NixOS adds -e; every failure below is handled explicitly
+        cd /              # the torrent user can't read the caller's cwd
+    
+        probeUrl="https://am.i.mullvad.net/json"
+        interval=15
+        stopAfter=4       # consecutive inconclusive probes before stopping qbit (~1 min)
+        startAfter=2      # consecutive good probes before starting qbit
+        healAfter=12      # consecutive broken-exec loops (~3 min) before restarting the tailscale container
+        bad=0; good=0; execFail=0
+    
         while true; do
-          out=$(${asTorrent} exec tailscale-torrent wget -qO- -T 10 https://am.i.mullvad.net/json 2>&1) && rc=0 || rc=$?
-          if echo "$out" | grep -Eq '"mullvad_exit_ip"[[:space:]]*:[[:space:]]*true'; then
-            fails=0
-            if ! systemctl is-active --quiet podman-qbittorrent.service; then
-              echo "mullvad ok, starting qbittorrent"
-              systemctl start podman-qbittorrent.service || echo "start failed"
+    
+          # 0. Can we exec into the tailscale container at all?
+          #    If not, this is a host/podman problem, not a VPN verdict.
+          if ! execOut=$(${asTorrent} exec tailscale-torrent true 2>&1); then
+            execFail=$((execFail + 1)); good=0
+            echo "podman exec failing ($execFail/$healAfter): $(echo "$execOut" | head -c 300)"
+            systemctl stop podman-qbittorrent.service
+            if [ "$execFail" -ge "$healAfter" ]; then
+              echo "--- diagnostics before heal ---"
+              ${asTorrent} ps -a --pod 2>&1 | head -20
+              ${asTorrent} --log-level=debug exec tailscale-torrent true 2>&1 | tail -30
+              journalctl -u podman-tailscale-torrent -n 30 --no-pager 2>&1
+              echo "--- restarting tailscale container ---"
+              systemctl restart --no-block podman-tailscale-torrent.service
+              execFail=0
             fi
-          else
-            fails=$((fails + 1))
-            echo "check failed (rc=$rc, fails=$fails): $(echo "$out" | head -c 300)"
-            if [ "$fails" -ge 2 ]; then
-              systemctl stop podman-qbittorrent.service
-            fi
+            sleep "$interval"; continue
           fi
-          sleep 15
+          execFail=0
+    
+          # 1. Kill switch must exist in the *current* netns (pod recreation wipes it)
+          if ! ${asTorrent} exec tailscale-torrent iptables-nft -C OUTPUT \
+                -m owner --uid-owner ${toString puid} -j QBIT_KILLSWITCH >/dev/null 2>&1; then
+            echo "kill switch missing: stopping qbittorrent, reinstalling"
+            systemctl stop podman-qbittorrent.service
+            out=$(${asTorrent} exec -i tailscale-torrent sh -s < ${killswitchRules} 2>&1) \
+              || echo "reinstall failed: $(echo "$out" | head -c 300)"
+            good=0; sleep 5; continue
+          fi
+    
+          # 2. Are we exiting via Mullvad?
+          out=$(${asTorrent} exec tailscale-torrent wget -qO- -T 10 "$probeUrl" 2>&1); rc=$?
+          if echo "$out" | grep -Eq '"mullvad_exit_ip"[[:space:]]*:[[:space:]]*true'; then
+            verdict=ok
+          elif echo "$out" | grep -Eq '"mullvad_exit_ip"[[:space:]]*:[[:space:]]*false'; then
+            verdict=notmullvad    # a real answer, and it says no
+          else
+            verdict=unknown       # timeout / DNS / TLS / bad response
+          fi
+    
+          case "$verdict" in
+            ok)
+              bad=0; good=$((good + 1))
+              if [ "$good" -ge "$startAfter" ] && ! systemctl is-active --quiet podman-qbittorrent.service; then
+                echo "mullvad ok (x$good), starting qbittorrent"
+                systemctl start podman-qbittorrent.service || echo "start failed"
+              fi
+              ;;
+            notmullvad)
+              good=0; bad=$stopAfter
+              echo "NOT a mullvad exit: $(echo "$out" | head -c 300)"
+              systemctl stop podman-qbittorrent.service
+              ;;
+            *)
+              good=0; bad=$((bad + 1))
+              echo "inconclusive (rc=$rc, $bad/$stopAfter): $(echo "$out" | head -c 200)"
+              if [ "$bad" -ge "$stopAfter" ]; then
+                systemctl stop podman-qbittorrent.service
+              fi
+              ;;
+          esac
+    
+          sleep "$interval"
         done
       '';
     };
   };
-
   # Containers
   virtualisation.oci-containers = {
     backend = "podman";
@@ -191,13 +253,16 @@ in {
           PGID = toString puid;
           TZ = "UTC";
           WEBUI_PORT = qbitPort;
+          UMASK = "002"; # group-writable files/dirs for the *arr apps
         };
         extraOptions = [
           "--pod=torrent" # shares the tailscale container's netns
         ];
         volumes = [
           "/appdata/qbittorrent:/config"
-          "/media/downloads:/downloads"
+          # Same path inside and out, so qBittorrent reports paths Lidarr/Sonarr/
+          # Radarr can open directly (no Remote Path Mapping needed).
+          "/media/downloads:/media/downloads"
         ];
       };
     };

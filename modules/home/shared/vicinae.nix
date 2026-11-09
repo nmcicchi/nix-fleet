@@ -1,11 +1,18 @@
 { lib, ... }: {
-  programs = {
-    vicinae = {
+  programs.vicinae = {
+    enable = true;
+    systemd = {
       enable = true;
+      autoStart = true;
     };
-    niri.settings.binds. "Mod+R" = lib.mkForce {
-      hot-key-overlay.title = "Open vicinae launcher";
-      action.spawn = [ "vicinae open" ];
+    useLayerShell = true;
+    enableFirefoxIntegration = true;
+  };
+
+  programs.niri.settings = {
+    binds."Mod+R" = lib.mkForce {
+      hotkey-overlay.title = "Open vicinae launcher";
+      action.spawn = [ "vicinae" "toggle" ];
     };
   };
 }

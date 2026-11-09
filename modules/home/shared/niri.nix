@@ -62,6 +62,11 @@
       hotkey-overlay.skip-at-startup = true;
       screenshot-path = "~/Pictures/Screenshots/Screenshot from %Y-%m-%d %H-%M-%S.png";
 
+      # --- Animation ---
+      animations = lib.mkDefault {
+        enable = true;
+      };
+
       # --- Window Rules ---
       window-rules = [
         {

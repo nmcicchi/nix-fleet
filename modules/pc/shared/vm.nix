@@ -6,12 +6,7 @@
 
   environment.systemPackages = with pkgs; [
     virt-viewer
-    spice-gtk
     usbredir
+    remmina
   ];
-
-  services.flatpak.packages = [
-    "com.rustdesk.RustDesk"
-  ];
-
 }
