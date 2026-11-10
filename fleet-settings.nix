@@ -32,6 +32,11 @@
         subStart = 362144; 
         subCount = 65536; 
       };    
+      flaresolverr = { 
+        uid = 1006; 
+        subStart = 427680; 
+        subCount = 65536; 
+      };    
     };
     containers = {
       searxng = "192.168.5.101";
