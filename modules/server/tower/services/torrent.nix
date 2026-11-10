@@ -80,6 +80,13 @@ in {
     # 2775: setgid so new subdirs keep the `downloads` group; group-writable
     # so the *arr apps can import (move) and clean up.
     "d /media/downloads 2775 ${qbitHostId} ${qbitHostId} -"
+
+    # Pre-create complete and incomplete subdirectories with identical enforced permissions
+    "d /media/downloads/complete 2775 ${qbitHostId} ${qbitHostId} -"
+    "d /media/downloads/incomplete 2775 ${qbitHostId} ${qbitHostId} -"
+    
+    # Apply recursive corrections if files already exist with wrong perms
+    "Z /media/downloads - ${qbitHostId} ${qbitHostId} -"
   ];
 
   boot.kernelModules = [ "xt_owner" "nf_tables" "nft_compat" "nft_reject_inet" ];
