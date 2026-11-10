@@ -57,6 +57,7 @@
       kavita = 5000;
       cwa = 8083;
       qbit = 8088;
+      flaresolverr = 8191;
 
       #Home home-automation
       homeassistant = 8123; # forced cause docker
