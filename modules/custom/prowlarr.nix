@@ -63,7 +63,7 @@ in
             ExecStart =
               let
                 linkApp = pkgs.replaceVarsWith {
-                  src = ./connect-to-prowlarr.sh;
+                  src = ./../../lib/connect-to-prowlarr.sh;
                   dir = "bin";
                   isExecutable = true;
                   replacements = {

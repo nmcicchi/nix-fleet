@@ -39,7 +39,7 @@ in
       environmentFiles = [ config.sops.secrets.lidarr_env.path ];
     };
 
-    # Register with the shared Prowlarr (lib/prowlarr.nix)
+    # Register with the shared Prowlarr
     prowlarrLinks.apps.Lidarr = {
       port = fleetSettings.sequoia.ports.lidarr;
       envFile = config.sops.secrets.lidarr_env.path;
