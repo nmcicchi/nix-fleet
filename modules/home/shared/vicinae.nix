@@ -6,7 +6,6 @@
       autoStart = true;
     };
     useLayerShell = true;
-    enableFirefoxIntegration = true;
   };
 
   programs.niri.settings = {

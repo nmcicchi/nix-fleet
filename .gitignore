@@ -1,3 +1,11 @@
 *~
 result
 dotfiles/noctalia/colors.json
+# Override global ignore rules for this template/fleet repository
+!devenv.nix
+!devenv.yaml
+!.envrc
+!.devenv/
+!.direnv/
+!.zed
+!.vscode

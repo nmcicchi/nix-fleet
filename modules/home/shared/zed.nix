@@ -72,10 +72,34 @@
         bindings = {
           "space f f" = "file_finder::Toggle";
           "space e" = "project_panel::ToggleFocus";
+          "space t" = "workspace::ToggleBottomDock";
+          # Vim-style split / pane navigation
+          "ctrl-h" = "workspace::ActivatePaneLeft";
+          "ctrl-l" = "workspace::ActivatePaneRight";
+          "ctrl-k" = "workspace::ActivatePaneUp";
+          "ctrl-j" = "workspace::ActivatePaneDown";
         };
       }
-    ];    
-
+      {
+        context = "ProjectPanel";
+        bindings = {
+          "space e" = "project_panel::ToggleFocus";
+          "enter" = "project_panel::Open";
+          "l" = "project_panel::Open";
+          "h" = "project_panel::CollapseSelectedEntry";
+        };
+      }
+      {
+        context = "Terminal";
+        bindings = {
+          "space t" = "workspace::ToggleBottomDock";
+          "ctrl-h" = "workspace::ActivatePaneLeft";
+          "ctrl-l" = "workspace::ActivatePaneRight";
+          "ctrl-k" = "workspace::ActivatePaneUp";
+          "ctrl-j" = "workspace::ActivatePaneDown";
+        };
+      }
+    ];
     extensions = [
       "nix"
       "markdown"
