@@ -16,6 +16,7 @@ in {
       containers.flaresolverr = {
         podman.user = user;
         image = "ghcr.io/flaresolverr/flaresolverr:latest";
+        pull = "newer";
         autoStart = true;
         
         ports = [

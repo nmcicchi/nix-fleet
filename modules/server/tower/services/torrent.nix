@@ -234,6 +234,7 @@ in {
       tailscale-torrent = {
         podman.user = user;
         image = "docker.io/tailscale/tailscale:latest";
+        pull = "newer";
         environmentFiles = [ "/run/tailscale-torrent/env" ];
         environment = {
           TS_STATE_DIR = "/var/lib/tailscale-torrent";
@@ -253,6 +254,7 @@ in {
       qbittorrent = {
         podman.user = user;
         image = "lscr.io/linuxserver/qbittorrent:latest";
+        pull = "newer";
         autoStart = false; # started by qbit-vpn-watchdog
         dependsOn = [ "tailscale-torrent" ];
         environment = {

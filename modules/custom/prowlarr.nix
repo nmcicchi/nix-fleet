@@ -17,24 +17,29 @@ let
   targetHost = "127.0.0.1";
 in
 {
-  options.services.prowlarrLinks.apps = lib.mkOption {
-    default = { };
-    description = "Apps Prowlarr should push indexers to, keyed by Prowlarr implementation name.";
-    type = lib.types.attrsOf (lib.types.submodule {
-      options = {
-        port = lib.mkOption {
-          type = lib.types.port;
-          description = "Port the app listens on (on 127.0.0.1).";
+  options.services.prowlarrLinks = {
+    enable = lib.mkEnableOption "Prowlarr indexer synchronization";
+
+    apps = lib.mkOption {
+      enable = lib.mkEnableOption "Prowlarr indexer synchronization";
+      default = { };
+      description = "Apps Prowlarr should push indexers to, keyed by Prowlarr implementation name.";
+      type = lib.types.attrsOf (lib.types.submodule {
+        options = {
+          port = lib.mkOption {
+            type = lib.types.port;
+            description = "Port the app listens on (on 127.0.0.1).";
+          };
+          envFile = lib.mkOption {
+            type = lib.types.either lib.types.path lib.types.str;
+            description = "Env file containing <NAME>__AUTH__APIKEY.";
+          };
         };
-        envFile = lib.mkOption {
-          type = lib.types.either lib.types.path lib.types.str;
-          description = "Env file containing <NAME>__AUTH__APIKEY.";
-        };
-      };
-    });
+      });
+    };
   };
 
-  config = {
+  config = lib.mkIf cfg.enable {
     services.prowlarr = {
       enable = true;
       settings = {

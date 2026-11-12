@@ -40,9 +40,12 @@ in
     };
 
     # Register with the shared Prowlarr
-    prowlarrLinks.apps.Lidarr = {
-      port = fleetSettings.sequoia.ports.lidarr;
-      envFile = config.sops.secrets.lidarr_env.path;
+    prowlarrLinks = {
+      enable = true;
+      apps.Lidarr = {
+        port = fleetSettings.sequoia.ports.lidarr;
+        envFile = config.sops.secrets.lidarr_env.path;
+      };
     };
   };
 

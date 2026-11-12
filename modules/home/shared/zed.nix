@@ -84,6 +84,7 @@
         context = "ProjectPanel";
         bindings = {
           "space e" = "project_panel::ToggleFocus";
+          "space t" = "workspace::ToggleBottomDock";
           "enter" = "project_panel::Open";
           "l" = "project_panel::Open";
           "h" = "project_panel::CollapseSelectedEntry";
@@ -92,6 +93,7 @@
       {
         context = "Terminal";
         bindings = {
+          "space e" = "project_panel::ToggleFocus";
           "space t" = "workspace::ToggleBottomDock";
           "ctrl-h" = "workspace::ActivatePaneLeft";
           "ctrl-l" = "workspace::ActivatePaneRight";

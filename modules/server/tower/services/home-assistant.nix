@@ -58,6 +58,7 @@ in {
       homeassistant = {
         podman.user = user;
         image = "ghcr.io/home-assistant/home-assistant:stable";
+        pull = "newer";
         autoStart = true;
         extraOptions = [
           "--network=host"
@@ -78,6 +79,7 @@ in {
       mosquitto = {
         podman.user = user;
         image = "eclipse-mosquitto:2";
+        pull = "newer";
         autoStart = true;
         ports = [
           "127.0.0.1:${mqttPort}:1883"
@@ -92,6 +94,7 @@ in {
       zigbee2mqtt = {
         podman.user = user;
         image = "ghcr.io/koenkk/zigbee2mqtt:latest";
+        pull = "newer";
         autoStart = true;
         extraOptions = [
           "--network=host"

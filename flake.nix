@@ -97,6 +97,10 @@
         path = ./devFlakes/jupyter;
         description = "Jupyter dev environment with devenv, and direnv";
       };
+      javascript = {
+        path = ./devFlakes/jupyter;
+        description = "Javascript dev environment with devenv, direnv, and zed settings";
+      };
     };
 
     nixosConfigurations = {

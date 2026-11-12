@@ -14,6 +14,7 @@ in {
       hypermind = {
         podman.user = user;
         image = "ghcr.io/lklynet/hypermind:latest";
+        pull = "newer";
         extraOptions = [ "--network=host" ];
         environment = {
           PORT = toString fleetSettings.sequoia.ports.hypermind;
@@ -25,6 +26,7 @@ in {
       hypermind-swarm = {
         podman.user = user;
         image = "ghcr.io/lklynet/hypermind-swarm:latest";
+        pull = "newer";
         extraOptions = [ "--network=host" ];
         environment = {
           PORT = toString fleetSettings.sequoia.ports.hyperswarm;

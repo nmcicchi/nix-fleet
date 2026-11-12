@@ -28,6 +28,7 @@ in {
         cwa = {
           podman.user = user;
           image = "crocodilestick/calibre-web-automated:latest";
+          pull = "newer";
           autoStart = true;
           ports = [ "127.0.0.1:${toString fleetSettings.sequoia.ports.cwa}:8083" ];
           environment = {
@@ -45,6 +46,7 @@ in {
         kavita = {
           podman.user = user;
           image = "lscr.io/linuxserver/kavita:latest";
+          pull = "newer";
           autoStart = true;
           ports = [ "127.0.0.1:${toString fleetSettings.sequoia.ports.kavita}:5000" ];
           environment = {

@@ -148,6 +148,7 @@ let
 
       "${instance.tsContainerName}" = {
         image = "tailscale/tailscale:latest";
+        pull = "newer";
         environmentFiles = [ "/run/${instance.tsContainerName}/env" ];
         extraOptions = [
           "--network=lan-bridge"

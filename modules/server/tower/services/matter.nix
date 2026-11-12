@@ -15,6 +15,7 @@ in {
       containers.matter-server = {
         podman.user = user;
         image = "ghcr.io/home-assistant-libs/python-matter-server:stable";
+        pull = "newer";
         autoStart = true;
         
         extraOptions = [
