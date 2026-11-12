@@ -21,6 +21,18 @@ services.mySyncthing = {
           };
         };
       };
+      "Work" = {
+        path = "/home/nic/Work";
+        devices = [ "laptop" "desktop" ];
+        watch = true;
+        versioning = {
+          type = "staggered";
+          params = {
+            cleanInterval = "3600";
+            maxAge = "15552000"; # 180 days
+          };
+        };
+      };
     };
   };
   environment.persistence."/persist" = {
@@ -30,6 +42,7 @@ services.mySyncthing = {
     users.nic = {
       directories = [
         "school"
+        "Work"
       ];
     };
   };

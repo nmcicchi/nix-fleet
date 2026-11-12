@@ -16,8 +16,13 @@ _: {
         ignorePatterns = [
           ".git"
           ".git/**"
-          "F26Team3"
         ];
+      };
+
+      "Work" = {
+        path = "/home/nic/Work";
+        devices = [ "server" ];
+        watch = true;
       };
     };
   };
