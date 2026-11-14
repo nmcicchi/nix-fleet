@@ -19,6 +19,11 @@
         "workbench.colorTheme" = "Mac Dark Pro";
         "direnv.status.show" = "warning";
         "keyboard.dispatch" = "keyCode";
+
+        "chat.disableAIFeatures" = true;
+        "github.copilot.enable" = {
+          "*" = false;
+        };
       };
     };
   };
