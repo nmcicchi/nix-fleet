@@ -1,7 +1,11 @@
 { pkgs, ... }: {
-  languages.javascript = {
-    enable = true;
-    eslint.enable = true;
+  languages = {
+    javascript = {
+      enable = true;
+      eslint.enable = true;
+    };
+    # for running a webserver
+    python.enable = true;
   };
 
   packages = with pkgs; [

@@ -16,6 +16,8 @@
   # Enable PCSC daemon for YubiKey smart card support
   services.pcscd.enable = true;
 
+  security.polkit.enable = true;
+
   # enable nix-ld to use vscode extensions from code store
   programs.nix-ld = {
     enable = true;
