@@ -6,7 +6,10 @@ in
   users = {
     groups.media = { };
     users = {
-      nic.extraGroups = [ "media" "downloads" ];
+      nic.extraGroups = [
+        "media"
+        "downloads"
+      ];
       # lets lidarr read and move/delete torrents
       lidarr.extraGroups = [ "downloads" ];
     };
