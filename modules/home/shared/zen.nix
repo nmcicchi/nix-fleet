@@ -1,4 +1,9 @@
-{ config, pkgs, nur, ... }:
+{
+  config,
+  pkgs,
+  nur,
+  ...
+}:
 
 let
   firefox-addons = nur.legacyPackages.${pkgs.system}.repos.rycee.firefox-addons;
@@ -112,6 +117,16 @@ in
           color = "blue";
           icon = "fingerprint";
           id = 1;
+        };
+        Help = {
+          color = "green";
+          icon = "fruit";
+          id = 2;
+        };
+        Yarr = {
+          color = "red";
+          icon = "circle";
+          id = 3;
         };
       };
 
