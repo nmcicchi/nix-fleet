@@ -1,4 +1,10 @@
-{ pkgs, config, lib, ... }: {
+{
+  pkgs,
+  config,
+  lib,
+  ...
+}:
+{
   programs.niri = {
     enable = true;
     # use nixpkgs cache instead of compiling from source
@@ -20,6 +26,10 @@
         power-key-handling.enable = false;
       };
 
+      # --- Gestures ---
+      gestures = {
+        hot-corners.enable = false;
+      };
 
       # --- Layout Configuration ---
       layout = {
@@ -30,19 +40,24 @@
           { proportion = 0.5; }
           { proportion = 0.66667; }
         ];
-        default-column-width = { proportion = 0.5; };
-        
-          focus-ring = {
-            width = 4;
+        default-column-width = {
+          proportion = 0.5;
+        };
+
+        focus-ring = {
+          width = 4;
           # active.color = "#e4a068";
-          };
-        
+        };
+
         # border.off = true;
-        
+
         shadow = {
           softness = 30;
           spread = 5;
-          offset = { x = 0; y = 5; };
+          offset = {
+            x = 0;
+            y = 5;
+          };
           color = "#0007";
         };
       };
@@ -56,7 +71,14 @@
       # --- Startup Processes ---
       spawn-at-startup = [
         { command = [ "noctalia-shell" ]; }
-        { command = [ "dbus-update-activation-environment" "--systemd" "WAYLAND_DISPLAY" "XDG_CURRENT_DESKTOP" ];}
+        {
+          command = [
+            "dbus-update-activation-environment"
+            "--systemd"
+            "WAYLAND_DISPLAY"
+            "XDG_CURRENT_DESKTOP"
+          ];
+        }
       ];
 
       hotkey-overlay.skip-at-startup = true;
@@ -73,11 +95,16 @@
           draw-border-with-background = false;
         }
         {
-          matches = [ { app-id = "firefox$"; title = "^Picture-in-Picture$"; } ];
+          matches = [
+            {
+              app-id = "firefox$";
+              title = "^Picture-in-Picture$";
+            }
+          ];
           open-floating = true;
         }
         {
-          matches = [ {app-id = "file_chooser"; } ];
+          matches = [ { app-id = "file_chooser"; } ];
           open-floating = true;
 
           default-floating-position = {
@@ -86,11 +113,15 @@
             relative-to = "top-right";
           };
 
-          default-column-width = { fixed = 1000; };
-          default-window-height = { fixed = 650; };
+          default-column-width = {
+            fixed = 1000;
+          };
+          default-window-height = {
+            fixed = 650;
+          };
         }
         {
-          matches = [ {app-id = "zen-twilight"; } ];
+          matches = [ { app-id = "zen-twilight"; } ];
           opacity = 0.90;
         }
       ];
@@ -109,68 +140,132 @@
         };
         "Mod+E" = {
           hotkey-overlay.title = "Open file manager: Yazi";
-          action.spawn = [ "sh" "-c" "alacritty -e yazi" ];
+          action.spawn = [
+            "sh"
+            "-c"
+            "alacritty -e yazi"
+          ];
         };
         "Mod+Shift+E" = {
           hotkey-overlay.title = "Open task manager: Kairo";
-          action.spawn = [ "sh" "-c" "alacritty -e kairo" ];
+          action.spawn = [
+            "sh"
+            "-c"
+            "alacritty -e kairo"
+          ];
         };
 
         # Core Noctalia Binds
         "Mod+R" = lib.mkDefault {
           hotkey-overlay.title = "Open launcher";
-          action.spawn = [ "sh" "-c" "noctalia-shell ipc call launcher toggle" ];
+          action.spawn = [
+            "sh"
+            "-c"
+            "noctalia-shell ipc call launcher toggle"
+          ];
         };
         "Mod+S" = lib.mkDefault {
           hotkey-overlay.title = "Open control center";
-          action.spawn = [ "sh" "-c" "noctalia-shell ipc call controlCenter toggle" ];
+          action.spawn = [
+            "sh"
+            "-c"
+            "noctalia-shell ipc call controlCenter toggle"
+          ];
         };
 
         # Hardware / Media Mappings
         "XF86AudioRaiseVolume" = {
           allow-when-locked = true;
-          action.spawn = [ "sh" "-c" "wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.1+ -l 1.0" ];
+          action.spawn = [
+            "sh"
+            "-c"
+            "wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.1+ -l 1.0"
+          ];
         };
         "XF86AudioLowerVolume" = {
           allow-when-locked = true;
-          action.spawn = [ "sh" "-c" "wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.1-" ];
+          action.spawn = [
+            "sh"
+            "-c"
+            "wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.1-"
+          ];
         };
         "XF86AudioMute" = {
           allow-when-locked = true;
-          action.spawn = [ "sh" "-c" "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle" ];
+          action.spawn = [
+            "sh"
+            "-c"
+            "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
+          ];
         };
         "XF86AudioMicMute" = {
           allow-when-locked = true;
-          action.spawn = [ "sh" "-c" "wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle" ];
+          action.spawn = [
+            "sh"
+            "-c"
+            "wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"
+          ];
         };
 
         "XF86AudioPlay" = {
           allow-when-locked = true;
-          action.spawn = [ "sh" "-c" "playerctl play-pause" ];
+          action.spawn = [
+            "sh"
+            "-c"
+            "playerctl play-pause"
+          ];
         };
         "XF86AudioStop" = {
           allow-when-locked = true;
-          action.spawn = [ "sh" "-c" "playerctl stop" ];
+          action.spawn = [
+            "sh"
+            "-c"
+            "playerctl stop"
+          ];
         };
         "XF86AudioPrev" = {
           allow-when-locked = true;
-          action.spawn = [ "sh" "-c" "playerctl previous" ];
+          action.spawn = [
+            "sh"
+            "-c"
+            "playerctl previous"
+          ];
         };
         "XF86AudioNext" = {
           allow-when-locked = true;
-          action.spawn = [ "sh" "-c" "playerctl next" ];
+          action.spawn = [
+            "sh"
+            "-c"
+            "playerctl next"
+          ];
         };
 
         "XF86MonBrightnessUp" = {
           allow-when-locked = true;
-          action.spawn = [ "brightnessctl" "--class=backlight" "set" "+10%" ];
+          action.spawn = [
+            "brightnessctl"
+            "--class=backlight"
+            "set"
+            "+10%"
+          ];
         };
         "XF86MonBrightnessDown" = {
           allow-when-locked = true;
-          action.spawn = [ "brightnessctl" "--class=backlight" "set" "10%-" ];
+          action.spawn = [
+            "brightnessctl"
+            "--class=backlight"
+            "set"
+            "10%-"
+          ];
         };
 
-        "XF86PowerOff".action.spawn = [ "noctalia-shell" "ipc" "call" "lockScreen" "lock" ];
+        "XF86PowerOff".action.spawn = [
+          "noctalia-shell"
+          "ipc"
+          "call"
+          "lockScreen"
+          "lock"
+        ];
 
         # Mouse binds
 
@@ -179,7 +274,7 @@
           repeat = false;
           action.toggle-overview = { };
         };
-        
+
         "Mod+Shift+C" = {
           repeat = false;
           action.close-window = { };
@@ -225,10 +320,22 @@
         "Mod+Shift+I".action.move-workspace-up = { };
 
         # Mouse & Wheel Bindings
-        "Mod+WheelScrollDown" = { cooldown-ms = 150; action.focus-workspace-down = { }; };
-        "Mod+WheelScrollUp" = { cooldown-ms = 150; action.focus-workspace-up = { }; };
-        "Mod+Ctrl+WheelScrollDown" = { cooldown-ms = 150; action.move-column-to-workspace-down = { }; };
-       "Mod+Ctrl+WheelScrollUp" = { cooldown-ms = 150; action.move-column-to-workspace-up = { }; };
+        "Mod+WheelScrollDown" = {
+          cooldown-ms = 150;
+          action.focus-workspace-down = { };
+        };
+        "Mod+WheelScrollUp" = {
+          cooldown-ms = 150;
+          action.focus-workspace-up = { };
+        };
+        "Mod+Ctrl+WheelScrollDown" = {
+          cooldown-ms = 150;
+          action.move-column-to-workspace-down = { };
+        };
+        "Mod+Ctrl+WheelScrollUp" = {
+          cooldown-ms = 150;
+          action.move-column-to-workspace-up = { };
+        };
 
         "Mod+Shift+WheelScrollDown".action.focus-column-right = { };
         "Mod+Shift+WheelScrollUp".action.focus-column-left = { };
@@ -245,7 +352,7 @@
         "Mod+7".action.focus-workspace = 7;
         "Mod+8".action.focus-workspace = 8;
         "Mod+9".action.focus-workspace = 9;
-        
+
         "Mod+Ctrl+1".action.move-column-to-workspace = 1;
         "Mod+Ctrl+2".action.move-column-to-workspace = 2;
         "Mod+Ctrl+3".action.move-column-to-workspace = 3;
@@ -290,7 +397,7 @@
           allow-inhibiting = false;
           action.toggle-keyboard-shortcuts-inhibit = { };
         };
-        
+
         "Mod+Shift+P".action.power-off-monitors = { };
       };
     };
@@ -304,11 +411,9 @@
     '';
   };
 
-  home.sessionVariables.NIRI_CONFIG =
-    "${config.home.homeDirectory}/.config/niri/full-config.kdl";
+  home.sessionVariables.NIRI_CONFIG = "${config.home.homeDirectory}/.config/niri/full-config.kdl";
 
-  systemd.user.sessionVariables.NIRI_CONFIG =
-  "${config.home.homeDirectory}/.config/niri/full-config.kdl";
+  systemd.user.sessionVariables.NIRI_CONFIG = "${config.home.homeDirectory}/.config/niri/full-config.kdl";
 
   # Create monitors.kdl for monique
   home.activation.niriMonitorsFile = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
@@ -317,4 +422,4 @@
       $DRY_RUN_CMD touch "${config.home.homeDirectory}/.config/niri/monitors.kdl"
     fi
   '';
-} 
+}
