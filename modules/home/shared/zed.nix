@@ -115,7 +115,7 @@ in
           "${leader}-2" = "workspace::ToggleBottomDock";
           "${leader}-3" = "workspace::ToggleRightDock";
 
-          # Pane navigation (unchanged)
+          # Pane navigation
           "${leader}-h" = "workspace::ActivatePaneLeft";
           "${leader}-j" = "workspace::ActivatePaneDown";
           "${leader}-k" = "workspace::ActivatePaneUp";
