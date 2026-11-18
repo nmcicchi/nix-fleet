@@ -24,7 +24,7 @@
     impermanence.url = "github:nix-community/impermanence";
 
     silentSDDM = {
-      url="github:uiriansan/SilentSDDM";
+      url = "github:uiriansan/SilentSDDM";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -68,193 +68,202 @@
     };
   };
 
-  outputs = {
-    self,
-    nixpkgs,
-    nixpkgs-unstable,
-    nvf,
-    home-manager,
-    nur,
-    deploy-rs,
-    ...
-  }@inputs: let
+  outputs =
+    {
+      self,
+      nixpkgs,
+      nixpkgs-unstable,
+      nvf,
+      home-manager,
+      nur,
+      deploy-rs,
+      ...
+    }@inputs:
+    let
 
-    # a function for creating nvf
-    nvfFN = systemPkgs:
-      (nvf.lib.neovimConfiguration {
-        pkgs = systemPkgs;
-        modules = [./nvf/nvf-configuration.nix];
-      }).neovim;
+      # a function for creating nvf
+      nvfFN =
+        systemPkgs:
+        (nvf.lib.neovimConfiguration {
+          pkgs = systemPkgs;
+          modules = [ ./nvf/nvf-configuration.nix ];
+        }).neovim;
 
-    mkHost = import ./lib/mkHost.nix;
+      mkHost = import ./lib/mkHost.nix;
 
-    mkHome = import ./lib/mkHome.nix { inherit home-manager; };
+      mkHome = import ./lib/mkHome.nix { inherit home-manager; };
 
-  in {
-    templates = {
-      # initialize a devenv with
-      # nix flake init -t ~/nix-fleet#java
-      # direnv allow
-      java = {
-        path = ./devFlakes/java;
-        description = "CS Java Dev Environment with devenv, direnv, and Checkstyle";
+    in
+    {
+      templates = {
+        # initialize a devenv with
+        # nix flake init -t ~/nix-fleet#java
+        # direnv allow
+        java = {
+          path = ./devFlakes/java;
+          description = "CS Java Dev Environment with devenv, direnv, and Checkstyle";
+        };
+        jupyter = {
+          path = ./devFlakes/jupyter;
+          description = "Jupyter dev environment with devenv, and direnv";
+        };
+        javascript = {
+          path = ./devFlakes/jupyter;
+          description = "Javascript dev environment with devenv, direnv, and zed settings";
+        };
+        scad = {
+          path = ./devFlakes/openSCAD;
+          description = "openSCAD dev environment with scad, admesh, and prusa slicer";
+        };
       };
-      jupyter = {
-        path = ./devFlakes/jupyter;
-        description = "Jupyter dev environment with devenv, and direnv";
-      };
-      javascript = {
-        path = ./devFlakes/jupyter;
-        description = "Javascript dev environment with devenv, direnv, and zed settings";
-      };
-    };
 
-    nixosConfigurations = {
-      installer = nixpkgs.lib.nixosSystem {
-        system = "x86_64-linux";
-        modules = [
-          ./modules/iso.nix
-        ];
-        specialArgs = { inherit inputs; };
-      };
+      nixosConfigurations = {
+        installer = nixpkgs.lib.nixosSystem {
+          system = "x86_64-linux";
+          modules = [
+            ./modules/iso.nix
+          ];
+          specialArgs = { inherit inputs; };
+        };
 
-      lotus = mkHost {
-        hostname = "lotus";
-        system = "x86_64-linux";
-        pkgsInput = nixpkgs;
-        overlays = [
+        lotus = mkHost {
+          hostname = "lotus";
+          system = "x86_64-linux";
+          pkgsInput = nixpkgs;
+          overlays = [
             (import ./overlays/steam.nix)
-            (import ./overlays/unstable.nix { inherit nixpkgs-unstable; } )
-            (import ./overlays/packages.nix { inherit inputs; } )
+            (import ./overlays/unstable.nix { inherit nixpkgs-unstable; })
+            (import ./overlays/packages.nix { inherit inputs; })
             (import ./overlays/python-pin.nix)
-        ];
-        modules = [
-          ./modules/pc/laptop
-          ./modules/pc/shared
-          inputs.nix-flatpak.nixosModules.nix-flatpak
-          inputs.silentSDDM.nixosModules.default
-          inputs.sops-nix.nixosModules.default
-          inputs.monique.nixosModules.default
-        ];
-        extraSpecialArgs = {
-          inherit nvfFN;
+          ];
+          modules = [
+            ./modules/pc/laptop
+            ./modules/pc/shared
+            inputs.nix-flatpak.nixosModules.nix-flatpak
+            inputs.silentSDDM.nixosModules.default
+            inputs.sops-nix.nixosModules.default
+            inputs.monique.nixosModules.default
+          ];
+          extraSpecialArgs = {
+            inherit nvfFN;
+          };
         };
-      };
 
-      cedar = mkHost {
-        hostname = "cedar";
-        system = "x86_64-linux";
-        pkgsInput = nixpkgs;
-        overlays = [
-          (import ./overlays/unstable.nix { inherit nixpkgs-unstable; } )
-          (import ./overlays/python-pin.nix )
-        ];
-        modules = [
-          ./modules/pc/shared
-          ./modules/pc/desktop
-          inputs.nix-flatpak.nixosModules.nix-flatpak
-          inputs.sops-nix.nixosModules.default
-          inputs.monique.nixosModules.default
-          inputs.silentSDDM.nixosModules.default
-        ];
-        extraSpecialArgs = {
-          inherit nvfFN;
+        cedar = mkHost {
+          hostname = "cedar";
+          system = "x86_64-linux";
+          pkgsInput = nixpkgs;
+          overlays = [
+            (import ./overlays/unstable.nix { inherit nixpkgs-unstable; })
+            (import ./overlays/python-pin.nix)
+          ];
+          modules = [
+            ./modules/pc/shared
+            ./modules/pc/desktop
+            inputs.nix-flatpak.nixosModules.nix-flatpak
+            inputs.sops-nix.nixosModules.default
+            inputs.monique.nixosModules.default
+            inputs.silentSDDM.nixosModules.default
+          ];
+          extraSpecialArgs = {
+            inherit nvfFN;
+          };
         };
-      };
 
-      sequoia = mkHost {
-        hostname = "sequoia";
-        routing = true;
-        system = "x86_64-linux";
-        pkgsInput = nixpkgs;
-        modules = [
-          ./modules/server/tower
-          ./modules/server/shared
-          inputs.sops-nix.nixosModules.default
-          inputs.disko.nixosModules.default
-          inputs.impermanence.nixosModules.impermanence
-        ];
-        overlays = [
-          (import ./overlays/unstable.nix { inherit nixpkgs-unstable; } )
-        ];
-      };
-
-      juniper = mkHost {
-        hostname = "juniper";
-        system = "aarch64-linux";
-        pkgsInput = nixpkgs;
-        modules = [
-          ./modules/server/assistant
-          ./modules/server/pis
-          ./modules/server/shared
-          inputs.sops-nix.nixosModules.default
-
-          # makes it so can build sd images
-          ({ modulesPath, ... }: {
-            imports = [
-              "${modulesPath}/installer/sd-card/sd-image-aarch64.nix"
-            ];
-          })
-        ];
-      };
-
-      # special case for rowan on raspi 5 pain in my ass
-      rowan = inputs.nixos-raspberrypi.lib.nixosSystem {
-        specialArgs = {
-          hostname = "rowan";
-          fleetSettings = (import ./fleet-settings.nix).rowan or {};
-          networkSettings = (import ./fleet-settings.nix).network;
-          loadModules = import ./lib/load-modules.nix { inherit (nixpkgs) lib; };
+        sequoia = mkHost {
+          hostname = "sequoia";
+          routing = true;
+          system = "x86_64-linux";
+          pkgsInput = nixpkgs;
+          modules = [
+            ./modules/server/tower
+            ./modules/server/shared
+            inputs.sops-nix.nixosModules.default
+            inputs.disko.nixosModules.default
+            inputs.impermanence.nixosModules.impermanence
+          ];
+          overlays = [
+            (import ./overlays/unstable.nix { inherit nixpkgs-unstable; })
+          ];
         };
-        modules = [
-          ./modules/shared
-          ./modules/custom
-          ./modules/server/dashboard
-          ./modules/server/pis
-          inputs.sops-nix.nixosModules.default
-        ] ++ (with inputs.nixos-raspberrypi.nixosModules; [
-          raspberry-pi-5.base
-          trusted-nix-caches
-          sd-image
-        ]);
-      };
 
-      aspen = mkHost {
-        hostname = "aspen";
-        system = "x86_64-linux";
-        pkgsInput = nixpkgs;
-        cudaSupport = true;
-        modules = [
+        juniper = mkHost {
+          hostname = "juniper";
+          system = "aarch64-linux";
+          pkgsInput = nixpkgs;
+          modules = [
+            ./modules/server/assistant
+            ./modules/server/pis
+            ./modules/server/shared
+            inputs.sops-nix.nixosModules.default
+
+            # makes it so can build sd images
+            ({ modulesPath, ... }: {
+              imports = [
+                "${modulesPath}/installer/sd-card/sd-image-aarch64.nix"
+              ];
+            })
+          ];
+        };
+
+        # special case for rowan on raspi 5 pain in my ass
+        rowan = inputs.nixos-raspberrypi.lib.nixosSystem {
+          specialArgs = {
+            hostname = "rowan";
+            fleetSettings = (import ./fleet-settings.nix).rowan or { };
+            networkSettings = (import ./fleet-settings.nix).network;
+            loadModules = import ./lib/load-modules.nix { inherit (nixpkgs) lib; };
+          };
+          modules = [
+            ./modules/shared
+            ./modules/custom
+            ./modules/server/dashboard
+            ./modules/server/pis
+            inputs.sops-nix.nixosModules.default
+          ]
+          ++ (with inputs.nixos-raspberrypi.nixosModules; [
+            raspberry-pi-5.base
+            trusted-nix-caches
+            sd-image
+          ]);
+        };
+
+        aspen = mkHost {
+          hostname = "aspen";
+          system = "x86_64-linux";
+          pkgsInput = nixpkgs;
+          cudaSupport = true;
+          modules = [
             ./modules/server/ai
             ./modules/server/shared
             inputs.sops-nix.nixosModules.default
-        ];
-      };
-    };
-
-    homeConfigurations = builtins.mapAttrs (target: config: mkHome target config) {
-      "nic@lotus" = {
-        pkgs = self.nixosConfigurations.lotus.pkgs;
-        modules = [
-          ./modules/home/lotus
-          ./modules/home/shared
-          inputs.niri.homeModules.niri
-          inputs.zen-browser.homeModules.twilight
-        ];
-        extraSpecialArgs = { inherit nur; };
+          ];
+        };
       };
 
-      "nic@cedar" = {
-        pkgs = self.nixosConfigurations.cedar.pkgs;
-        modules = [
-          ./modules/home/shared
-          ./modules/home/cedar
-          inputs.niri.homeModules.niri
-          inputs.zen-browser.homeModules.twilight
-          inputs.sops-nix.homeManagerModules.sops
-        ];
-        extraSpecialArgs = { inherit nur; };
+      homeConfigurations = builtins.mapAttrs (target: config: mkHome target config) {
+        "nic@lotus" = {
+          pkgs = self.nixosConfigurations.lotus.pkgs;
+          modules = [
+            ./modules/home/lotus
+            ./modules/home/shared
+            inputs.niri.homeModules.niri
+            inputs.zen-browser.homeModules.twilight
+          ];
+          extraSpecialArgs = { inherit nur; };
+        };
+
+        "nic@cedar" = {
+          pkgs = self.nixosConfigurations.cedar.pkgs;
+          modules = [
+            ./modules/home/shared
+            ./modules/home/cedar
+            inputs.niri.homeModules.niri
+            inputs.zen-browser.homeModules.twilight
+            inputs.sops-nix.homeManagerModules.sops
+          ];
+          extraSpecialArgs = { inherit nur; };
+        };
       };
     };
-  };
 }
