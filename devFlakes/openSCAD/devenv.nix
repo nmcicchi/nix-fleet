@@ -3,8 +3,6 @@
     # Parametric CAD
     openscad
 
-    # CLI mesh validator
-    admesh
     # 3D printing slicer
     prusa-slicer
   ];

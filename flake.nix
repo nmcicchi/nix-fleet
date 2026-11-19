@@ -115,6 +115,10 @@
           path = ./devFlakes/openSCAD;
           description = "openSCAD dev environment with scad, admesh, and prusa slicer";
         };
+        network = {
+          path = ./devFlakes/network;
+          description = "scripts for analyzing network traffic on a remote device";
+        };
       };
 
       nixosConfigurations = {
