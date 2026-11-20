@@ -20,7 +20,7 @@ _: {
   '';
 
   # enables wake on lan, must be enabled in bios
-  #networking.interfaces.<iface>.wakeOnLan.enable = true;
+  networking.interfaces.eno1.wakeOnLan.enable = true;
 
   # Optional: If streaming over Tailscale, trust the interface so Tailscale traffic isn't blocked
   networking.firewall.trustedInterfaces = [ "tailscale0" ];
