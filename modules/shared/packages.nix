@@ -13,6 +13,7 @@
     usbutils
     iftop
     btop
+    tcpdump
   ];
 in {
   environment.systemPackages = stable;

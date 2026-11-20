@@ -2,7 +2,8 @@
   pkgs,
   nvfFN,
   ...
-}: let
+}:
+let
   stable = with pkgs; [
     mpv # terminal video player
     yt-dlp # yt vid downloader
@@ -25,6 +26,7 @@
     qalculate-qt # calculator
     fd
     nmap
+    moonlight-qt # remote gaming viewer
   ];
 
   unstable = with pkgs.unstable; [
@@ -32,6 +34,7 @@
 
   nvfPkg = nvfFN pkgs.unstable;
 
-in {
+in
+{
   environment.systemPackages = stable ++ unstable ++ [ nvfPkg ];
 }
