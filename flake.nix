@@ -42,11 +42,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    watui = {
-      url = "github:Arun0A/watui";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     monique = {
       url = "github:ToRvaLDz/monique";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -89,7 +84,7 @@
           modules = [ ./nvf/nvf-configuration.nix ];
         }).neovim;
 
-      mkHost = import ./lib/mkHost.nix;
+      mkHost = import ./lib/mkHost.nix { inherit self; };
 
       mkHome = import ./lib/mkHome.nix { inherit home-manager; };
 

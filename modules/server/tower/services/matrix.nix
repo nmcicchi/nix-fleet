@@ -1,4 +1,5 @@
 {
+  self,
   config,
   fleetSettings,
   pkgs,
@@ -7,35 +8,38 @@
 let
   targetHost = "127.0.0.1";
   matrixPort = fleetSettings.sequoia.ports.matrix;
-  appservicePort = fleetSettings.sequoia.ports.mautrixWhatsapp;
+  appservicePort = fleetSettings.sequoia.ports.whatsapp;
 in
 {
   sops.secrets = {
-    conduwuit_reg_token = {
-      owner = "conduwuit"; # Verify exact user name in your nixpkgs module (e.g. conduwuit / continuwuity)
+    continuwuity_reg_token = {
+      sopsFile = self + "/secrets/tower.yaml";
+      owner = "continuwuity";
       mode = "0400";
     };
     mautrix_whatsapp_env = {
+      sopsFile = self + "/secrets/tower.yaml";
       mode = "0400";
     };
   };
 
   services = {
-    matrix-conduwuit = {
+    matrix-continuwuity = {
       enable = true;
+      # using latest to avoid critical CVE
+      package = pkgs.unstable.matrix-continuwuity;
       settings.global = {
         server_name = "matrix.home";
         address = [ targetHost ];
-        port = matrixPort;
+        port = [ matrixPort ];
         allow_registration = true; # Flip to false after creating @nic:matrix.home
-        registration_token_file = config.sops.secrets.conduwuit_reg_token.path;
+        registration_token_file = config.sops.secrets.continuwuity_reg_token.path;
         allow_federation = false;
       };
     };
 
     mautrix-whatsapp = {
       enable = true;
-      path = [ pkgs.ffmpeg ];
       environmentFile = config.sops.secrets.mautrix_whatsapp_env.path;
       settings = {
         homeserver = {
@@ -63,5 +67,14 @@ in
         };
       };
     };
+  };
+  # Add ffmpeg to whatsapp for media decoding
+  systemd.services.mautrix-whatsapp.path = [ pkgs.ffmpeg ];
+
+  environment.persistence."/persist" = {
+    directories = [
+      "/var/lib/mautrix-whatsapp"
+      "/var/lib/matrix-continuwuity"
+    ];
   };
 }

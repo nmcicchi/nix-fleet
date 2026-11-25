@@ -84,6 +84,9 @@
       whatsapp = 29318;
     };
 
+    # matrix-whatsapp uses this package because it is written in go not rust
+    permittedInsecurePackages = [ "olm-3.2.16" ];
+
   };
 
   juniper = {

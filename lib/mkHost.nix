@@ -1,13 +1,15 @@
+{ self }:
 {
   hostname,
   routing ? false,
   system,
-  overlays ? [],
+  overlays ? [ ],
   cudaSupport ? false,
   modules,
-  extraSpecialArgs ? {},
-  pkgsInput
-}: let
+  extraSpecialArgs ? { },
+  pkgsInput,
+}:
+let
   fleetSettings = import ../fleet-settings.nix;
 in
 pkgsInput.lib.nixosSystem {
@@ -20,25 +22,25 @@ pkgsInput.lib.nixosSystem {
     config = {
       inherit cudaSupport;
       allowUnfree = true;
+      # from matrix-whatsapp
+      permittedInsecurePackages = fleetSettings.${hostname}.permittedInsecurePackages or [ ];
     };
   };
 
   modules = [
     ../modules/shared
     ../modules/custom
-  ] ++ modules;
+  ]
+  ++ modules;
 
   specialArgs = {
-    inherit hostname;
+    inherit hostname self;
 
-    fleetSettings =
-      if routing
-      then fleetSettings
-      else fleetSettings.${hostname} or {};
+    fleetSettings = if routing then fleetSettings else fleetSettings.${hostname} or { };
 
     networkSettings = fleetSettings.network;
 
-    loadModules =
-      import ./load-modules.nix { inherit (pkgsInput) lib; };
-  } // extraSpecialArgs;
+    loadModules = import ./load-modules.nix { inherit (pkgsInput) lib; };
+  }
+  // extraSpecialArgs;
 }
