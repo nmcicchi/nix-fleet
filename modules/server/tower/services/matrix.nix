@@ -1,0 +1,67 @@
+{
+  config,
+  fleetSettings,
+  pkgs,
+  ...
+}:
+let
+  targetHost = "127.0.0.1";
+  matrixPort = fleetSettings.sequoia.ports.matrix;
+  appservicePort = fleetSettings.sequoia.ports.mautrixWhatsapp;
+in
+{
+  sops.secrets = {
+    conduwuit_reg_token = {
+      owner = "conduwuit"; # Verify exact user name in your nixpkgs module (e.g. conduwuit / continuwuity)
+      mode = "0400";
+    };
+    mautrix_whatsapp_env = {
+      mode = "0400";
+    };
+  };
+
+  services = {
+    matrix-conduwuit = {
+      enable = true;
+      settings.global = {
+        server_name = "matrix.home";
+        address = [ targetHost ];
+        port = matrixPort;
+        allow_registration = true; # Flip to false after creating @nic:matrix.home
+        registration_token_file = config.sops.secrets.conduwuit_reg_token.path;
+        allow_federation = false;
+      };
+    };
+
+    mautrix-whatsapp = {
+      enable = true;
+      path = [ pkgs.ffmpeg ];
+      environmentFile = config.sops.secrets.mautrix_whatsapp_env.path;
+      settings = {
+        homeserver = {
+          address = "http://${targetHost}:${toString matrixPort}";
+          domain = "matrix.home";
+        };
+        appservice = {
+          address = "http://${targetHost}:${toString appservicePort}";
+          hostname = targetHost;
+          port = appservicePort;
+          database = {
+            type = "sqlite3-fk-wal";
+            uri = "file:/var/lib/mautrix-whatsapp/mautrix-whatsapp.db?_txlock=immediate";
+          };
+        };
+        bridge = {
+          permissions = {
+            "@nic:matrix.home" = "admin";
+          };
+        };
+        encryption = {
+          allow = true;
+          default = true;
+          require = false;
+        };
+      };
+    };
+  };
+}

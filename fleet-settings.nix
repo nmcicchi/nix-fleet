@@ -7,36 +7,36 @@
     shim = "192.168.6.200";
 
     users = {
-      hypermind = { 
-        uid = 1002; 
-        subStart = 100000; 
-        subCount = 65536; 
+      hypermind = {
+        uid = 1002;
+        subStart = 100000;
+        subCount = 65536;
       };
-      torrent = { 
-        uid = 1001; 
-        subStart = 165536; 
-        subCount = 65536; 
+      torrent = {
+        uid = 1001;
+        subStart = 165536;
+        subCount = 65536;
       };
-      matter = { 
-        uid = 1003; 
-        subStart = 231072; 
-        subCount = 65536; 
+      matter = {
+        uid = 1003;
+        subStart = 231072;
+        subCount = 65536;
       };
-      home-automation = { 
-        uid = 1004; 
-        subStart = 296608; 
-        subCount = 65536; 
+      home-automation = {
+        uid = 1004;
+        subStart = 296608;
+        subCount = 65536;
       };
-      library = { 
-        uid = 1005; 
-        subStart = 362144; 
-        subCount = 65536; 
-      };    
-      flaresolverr = { 
-        uid = 1006; 
-        subStart = 427680; 
-        subCount = 65536; 
-      };    
+      library = {
+        uid = 1005;
+        subStart = 362144;
+        subCount = 65536;
+      };
+      flaresolverr = {
+        uid = 1006;
+        subStart = 427680;
+        subCount = 65536;
+      };
     };
     containers = {
       searxng = "192.168.5.101";
@@ -53,7 +53,7 @@
       sabnzbd = 8085;
       lidarr = 8686;
       prowlarr = 9696;
-      syncthing = 22000; #hardcoded atm
+      syncthing = 22000; # hardcoded atm
       kavita = 5000;
       cwa = 8083;
       qbit = 8088;
@@ -77,9 +77,11 @@
         http = 3080;
         dns = 53;
       };
-# Others
+      # Others
       hypermind = 3001;
       hyperswarm = 3002;
+      matrix = 6167;
+      whatsapp = 29318;
     };
 
   };
@@ -101,7 +103,7 @@
   rowan = {
     lan = "192.168.5.89";
     wifi = "192.168.5.88";
-    
+
     ports = {
       glances = 61208;
       prometheus = 9100;
@@ -127,7 +129,10 @@
     subnet = "192.168.4.0";
     subnetPrefix = 22;
     gateway = "192.168.4.1";
-    dns = [ "192.168.4.1" "1.1.1.1" ];
+    dns = [
+      "192.168.4.1"
+      "1.1.1.1"
+    ];
     ssid = "MikroTik-75856A";
     tz = "America/New_York";
     adguard = "192.168.5.1";

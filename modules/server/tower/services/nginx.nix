@@ -11,19 +11,21 @@ let
   };
 
   # Generate the repetitive localhost virtual hosts for Sequoia
-  sequoiaStandardHosts = builtins.listToAttrs (map (mkLocalProxy "sequoia") [
-    "hypermind"
-    "hyperswarm"
-    "navidrome"
-    "prowlarr"
-    "grafana"
-    "glances"
-    "lidarr"
-    "zigbee"
-    "kavita"
-    "cwa"
-    "qbit"
-  ]);
+  sequoiaStandardHosts = builtins.listToAttrs (
+    map (mkLocalProxy "sequoia") [
+      "hypermind"
+      "hyperswarm"
+      "navidrome"
+      "prowlarr"
+      "grafana"
+      "glances"
+      "lidarr"
+      "zigbee"
+      "kavita"
+      "cwa"
+      "qbit"
+    ]
+  );
 
   # Non-standard or unique mappings that break the cookie-cutter pattern
   customHosts = {
@@ -57,7 +59,7 @@ let
     "sabnzbd.home" = {
       locations."/" = {
         proxyPass = "http://127.0.0.1:${toString fleetSettings.sequoia.ports.sabnzbd}";
-        
+
         # Explicitly pass the original host header down to SABnzbd
         extraConfig = ''
           proxy_set_header Host $host;
@@ -65,6 +67,13 @@ let
           proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
           proxy_set_header X-Forwarded-Proto $scheme;
         '';
+      };
+    };
+
+    "matrix.home" = {
+      locations."/" = {
+        proxyPass = "http://127.0.0.1:${toString fleetSettings.sequoia.ports.matrix}";
+        proxyWebsockets = true;
       };
     };
   };
