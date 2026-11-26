@@ -5,6 +5,7 @@
   system,
   overlays ? [ ],
   cudaSupport ? false,
+  allowUnfree ? true,
   modules,
   extraSpecialArgs ? { },
   pkgsInput,
@@ -17,11 +18,8 @@ pkgsInput.lib.nixosSystem {
 
   pkgs = import pkgsInput {
     inherit system overlays;
-    # does this work? no
-    # stdenv.hostPlatform.system = system;
     config = {
-      inherit cudaSupport;
-      allowUnfree = true;
+      inherit cudaSupport allowUnfree;
       # from matrix-whatsapp
       permittedInsecurePackages = fleetSettings.${hostname}.permittedInsecurePackages or [ ];
     };

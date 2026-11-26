@@ -40,6 +40,7 @@ in
 
     mautrix-whatsapp = {
       enable = true;
+      package = pkgs.unstable.mautrix-whatsapp;
       environmentFile = config.sops.secrets.mautrix_whatsapp_env.path;
       settings = {
         homeserver = {
@@ -50,13 +51,19 @@ in
           address = "http://${targetHost}:${toString appservicePort}";
           hostname = targetHost;
           port = appservicePort;
-          database = {
-            type = "sqlite3-fk-wal";
-            uri = "file:/var/lib/mautrix-whatsapp/mautrix-whatsapp.db?_txlock=immediate";
+          id = "whatsapp";
+          bot = {
+            username = "whatsappbot";
+            displayname = "WhatsApp Bridge Bot";
           };
+        };
+        database = {
+          type = "sqlite3-fk-wal";
+          uri = "file:/var/lib/mautrix-whatsapp/mautrix-whatsapp.db?_txlock=immediate";
         };
         bridge = {
           permissions = {
+            "matrix.home" = "user";
             "@nic:matrix.home" = "admin";
           };
         };
@@ -64,10 +71,12 @@ in
           allow = true;
           default = true;
           require = false;
+          pickle_key = "$ENCRYPTION_PICKLE_KEY";
         };
       };
     };
   };
+
   # Add ffmpeg to whatsapp for media decoding
   systemd.services.mautrix-whatsapp.path = [ pkgs.ffmpeg ];
 
