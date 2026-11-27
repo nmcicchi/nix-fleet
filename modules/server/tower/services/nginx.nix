@@ -75,6 +75,14 @@ let
         proxyPass = "http://127.0.0.1:${toString fleetSettings.sequoia.ports.matrix}";
         proxyWebsockets = true;
       };
+
+      # Hide OAuth/OIDC discovery so clients fall back to password login
+      locations."= /_matrix/client/v1/auth_metadata" = {
+        extraConfig = ''
+          default_type application/json;
+          return 404 '{"errcode":"M_UNRECOGNIZED","error":"Unrecognized request"}';
+        '';
+      };
     };
   };
 in

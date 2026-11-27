@@ -77,6 +77,7 @@
         http = 3080;
         dns = 53;
       };
+      ntfy = 2586;
       # Others
       hypermind = 3001;
       hyperswarm = 3002;
