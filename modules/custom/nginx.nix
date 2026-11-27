@@ -8,7 +8,7 @@ let
   cfg = config.my.reverseProxy;
 
   vhostSubmodule = lib.types.submodule (
-    { name }: {
+    { name, ... }: {
       options = {
         enable = lib.mkEnableOption "Nginx reverse proxy vhost" // {
           default = false;

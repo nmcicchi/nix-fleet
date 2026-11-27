@@ -1,7 +1,7 @@
 { pkgs, ... }:
 let
   notifyWrapper = pkgs.writeShellScript "matrix-ntfy-notify" ''
-    # Skip if Fractal is already running to prevent duplicate alerts
+    # Suppress if Fractal is already open on this machine
     if ${pkgs.procps}/bin/pgrep -x fractal >/dev/null; then
       exit 0
     fi
@@ -17,11 +17,10 @@ in
     libnotify
   ];
 
-  # Place your token file via sops-nix and reference its path here
   xdg.configFile."ntfy/client.yml".text = ''
-    default-host: https://ntfy.yourdomain.com
+    default-host: https://ntfy.home
     subscribe:
-      - topic: up_matrix_laptop_9f8a7b6c
+      - topic: up_matrix_shared_9f8a7b6c
         command: "${notifyWrapper}"
   '';
 
@@ -31,7 +30,8 @@ in
       After = [ "network-online.target" ];
     };
     Service = {
-      # If using token auth, pass NTFY_TOKEN via EnvironmentFile from sops-nix
+      # Uses the sops-nix secret decrypted on the NixOS host
+      EnvironmentFile = "/run/secrets/ntfy-client-env";
       ExecStart = "${pkgs.ntfy-sh}/bin/ntfy subscribe --from-config";
       Restart = "always";
       RestartSec = 5;
