@@ -1,8 +1,17 @@
-{ loadModules, hostname, pkgs, ... }:
+{
+  loadModules,
+  hostname,
+  pkgs,
+  self,
+  ...
+}:
 {
   imports = loadModules ./.;
-  nix.settings.experimental-features = ["nix-command" "flakes"];
-  
+  nix.settings.experimental-features = [
+    "nix-command"
+    "flakes"
+  ];
+
   networking.hostName = hostname;
 
   system.stateVersion = "25.05";
@@ -23,4 +32,6 @@
     "Comodo AAA Services root"
     "emSign ECC Root CA - G3"
   ];
+  # trusts
+  security.pki.certificateFiles = [ (self + /certs/ca.pem) ];
 }
