@@ -13,19 +13,24 @@ creation_rules:
       - age:
           - *admin_laptop
           - *admin_desktop
-          - *yubikey 
+          - *yubikey
           - *server_tower
           - *server_assistant
           - *server_dashboard
           - *server_ai
-
+  - path_regex: secrets/certs\.yaml$
+    key_groups:
+      - age:
+          - *admin_laptop
+          - *admin_desktop
+          - *yubikey
   # Tower-specific secrets
   - path_regex: secrets/tower\.yaml$
     key_groups:
       - age:
           - *admin_laptop
           - *admin_desktop
-          - *yubikey 
+          - *yubikey
           - *server_tower
 
   # Pi-specific secrets
@@ -33,7 +38,7 @@ creation_rules:
     key_groups:
       - age:
           - *admin_laptop
-          - *yubikey 
+          - *yubikey
           - *admin_desktop
           - *server_assistant
           - *server_dashboard
@@ -41,7 +46,7 @@ creation_rules:
   - path_regex: secrets/laptop\.yaml$
     key_groups:
       - age:
-        - *admin_laptop
-        - *yubikey 
-        - *admin_desktop
-        - *server_ai
+          - *admin_laptop
+          - *yubikey
+          - *admin_desktop
+          - *server_ai
